@@ -39,7 +39,7 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
         return self
     }
     
-    func set(root screen: Screen) {
+    public func set(root screen: Screen) {
         precondition(self.root == nil)
         self.root = screen
     }
