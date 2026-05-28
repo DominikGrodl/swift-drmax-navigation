@@ -30,7 +30,7 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
     var completePath: [Screen] {
         path + (presentation?.controller.completePath ?? [])
     }
-    
+
     var topMostController: RootNavigationController<Screen> {
         if let presentation {
             return presentation.controller.topMostController
@@ -38,7 +38,7 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
 
         return self
     }
-    
+
     public func set(root screen: Screen) {
         precondition(self.root == nil)
         self.root = screen

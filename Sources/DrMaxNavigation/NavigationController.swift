@@ -90,7 +90,7 @@ public extension NavigationController where Child: CasePathable, Parent: CasePat
             parent.popBefore(casePath(screen), animated: animated)
         }
     }
-    
+
     func popBefore(
         _ element: PartialCaseKeyPath<Child>,
         animated: Bool = true,

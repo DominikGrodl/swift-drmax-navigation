@@ -37,7 +37,7 @@ extension RootNavigationController where Screen: CasePathable {
         case nil: break
         }
     }
-    
+
     public func popTo(
         _ element: PartialCaseKeyPath<Screen>,
         animated: Bool = true,

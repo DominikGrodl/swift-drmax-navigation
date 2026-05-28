@@ -214,51 +214,51 @@ struct PlainNavigationControllerDestinationTest {
         controller.popBefore(\.childOne)
         #expect(parent.presentation == nil)
     }
-    
+
     @Test
-        func popToPullbackRootRemovesFirstChildDestinationAndEverythingAfter() async throws {
-            let parent = RootNavigationController<Destination>(root: .one)
-            parent.navigate(to: .two)
-            
-            let controller = parent.pullback(on: \.child)
-            
-            controller.navigate(to: .childOne)
-            parent.navigate(to: .three)
-            controller.navigate(to: .childTwo)
-            
-            #expect(parent.path == [.two, .child(.childOne), .three, .child(.childTwo)])
-            
-            controller.popToPullbackRoot()
-            
-            #expect(parent.path == [.two])
-        }
+    func popToPullbackRootRemovesFirstChildDestinationAndEverythingAfter() async throws {
+        let parent = RootNavigationController<Destination>(root: .one)
+        parent.navigate(to: .two)
 
-        @Test
-        func popToPullbackRootDismissesPresentedChildRoot() async throws {
-            let parent = RootNavigationController<Destination>(root: .one)
-            let controller = parent.pullback(on: \.child)
-            
-            controller.navigate(to: .childOne, style: .cover)
-            controller.navigate(to: .childTwo)
-            
-            #expect(parent.presentation?.controller.root == .child(.childOne))
-            #expect(parent.presentation?.controller.path == [.child(.childTwo)])
-            
-            controller.popToPullbackRoot()
-            
-            #expect(parent.presentation == nil)
-        }
+        let controller = parent.pullback(on: \.child)
 
-        @Test
-        func popToPullbackRootDoesNothingWhenChildDestinationIsMissing() async throws {
-            let parent = RootNavigationController<Destination>(
-                root: .one,
-                path: [.two, .three]
-            )
-            let controller = parent.pullback(on: \.child)
-            
-            controller.popToPullbackRoot()
-            
-            #expect(parent.path == [.two, .three])
-        }
+        controller.navigate(to: .childOne)
+        parent.navigate(to: .three)
+        controller.navigate(to: .childTwo)
+
+        #expect(parent.path == [.two, .child(.childOne), .three, .child(.childTwo)])
+
+        controller.popToPullbackRoot()
+
+        #expect(parent.path == [.two])
+    }
+
+    @Test
+    func popToPullbackRootDismissesPresentedChildRoot() async throws {
+        let parent = RootNavigationController<Destination>(root: .one)
+        let controller = parent.pullback(on: \.child)
+
+        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childTwo)
+
+        #expect(parent.presentation?.controller.root == .child(.childOne))
+        #expect(parent.presentation?.controller.path == [.child(.childTwo)])
+
+        controller.popToPullbackRoot()
+
+        #expect(parent.presentation == nil)
+    }
+
+    @Test
+    func popToPullbackRootDoesNothingWhenChildDestinationIsMissing() async throws {
+        let parent = RootNavigationController<Destination>(
+            root: .one,
+            path: [.two, .three]
+        )
+        let controller = parent.pullback(on: \.child)
+
+        controller.popToPullbackRoot()
+
+        #expect(parent.path == [.two, .three])
+    }
 }
