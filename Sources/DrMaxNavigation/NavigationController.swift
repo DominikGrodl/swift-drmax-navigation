@@ -85,6 +85,12 @@ public extension NavigationController {
 
 // MARK: - Public CasePathable API
 public extension NavigationController where Child: CasePathable, Parent: CasePathable {
+    func popToPullbackRoot(animated: Bool = true) {
+        if let screen = parent.completePath.compactMap({ $0[case: casePath] }).first {
+            parent.popBefore(casePath(screen), animated: animated)
+        }
+    }
+    
     func popBefore(
         _ element: PartialCaseKeyPath<Child>,
         animated: Bool = true,
