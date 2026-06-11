@@ -12,7 +12,10 @@
 
 @_spi(Testing)
 public extension RootNavigationController {
+    /// The current navigation path. Available for testing purposes only.
     var testPath: [Screen] { path }
+    /// The root screen. Available for testing purposes only.
     var testRoot: Screen? { root }
+    /// The current active presentation. Available for testing purposes only.
     var testPresentation: Presentation<Screen>? { presentation }
 }

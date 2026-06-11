@@ -13,12 +13,28 @@
 import CasePaths
 import SwiftUI
 
+/// The main controller for managing a navigation tree.
+///
+/// ``RootNavigationController`` is the source of truth for your navigation state. It manages:
+/// - The root screen of the navigation tree.
+/// - The current stack (path) of pushed screens.
+/// - Any active presentation (sheet, cover, popover), which can in turn have its own navigation tree.
+///
+/// You typically create one ``RootNavigationController`` per major section of your app (e.g., per tab).
+///
+/// ```swift
+/// let dashboardController = RootNavigationController<DashboardScreen>(root: .home)
+/// ```
 @Observable
 public class RootNavigationController<Screen: Hashable>: Identifiable {
     private(set) var root: Screen?
     var path: [Screen]
     var presentation: Presentation<Screen>?
 
+    /// Creates a new navigation controller.
+    /// - Parameters:
+    ///   - root: The initial screen to display.
+    ///   - path: The initial stack of pushed screens.
     public init(
         root: Screen? = nil,
         path: [Screen] = []
@@ -39,6 +55,9 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
         return self
     }
 
+    /// Sets the root screen of the controller.
+    /// - Parameter screen: The screen to set as root.
+    /// - Note: This can only be called once, typically if the controller was initialized without a root.
     public func set(root screen: Screen) {
         precondition(self.root == nil)
         self.root = screen

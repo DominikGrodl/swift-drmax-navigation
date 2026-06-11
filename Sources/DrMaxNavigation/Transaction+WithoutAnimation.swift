@@ -13,12 +13,21 @@
 import SwiftUI
 
 extension Transaction {
+    /// Executes a body of code without animations.
+    /// - Parameter body: The code to execute.
+    /// - Returns: The result of the body.
     public static func withoutAnimation<Result>(body: () throws -> Result) rethrows -> Result {
         var transaction = Transaction()
         transaction.disablesAnimations = true
         return try withTransaction(transaction, body)
     }
 
+    /// Conditionally executes a body of code with or without animations.
+    /// - Parameters:
+    ///   - animated: Whether to use animations.
+    ///   - body: The code to execute.
+    ///   - completion: A closure to execute after the transaction finishes.
+    /// - Returns: The result of the body.
     @discardableResult
     static func conditionalyDisableAnimations<Result>(
         animated: Bool,

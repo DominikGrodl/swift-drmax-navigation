@@ -166,8 +166,3 @@ Same goes for dismissing, where all you need to do is call the `pop{Before/To}` 
 The library provides a `NavigationStyle` enum encapsulating all the styles of navigation supported. The style are `push`, `sheet`, `cover` and `popover`.
 
 Notice the missing `alert` style. That is intended ', because presenting alerts is often a UI/UX functionality and not a proper navigation, so it is left to be handled by the View/model alone.
-
-## Versions
-
-While this library is currently being used in production inside the [DrMax app](https://apps.apple.com/cz/app/dr-max/id1582419410), it is currently in a beta release here on GitHub. 1.0 feature checklist:
-- [ ] ABC

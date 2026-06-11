@@ -13,6 +13,12 @@
 import SwiftUI
 
 public extension RootNavigationController {
+    /// Navigates to a new screen.
+    /// - Parameters:
+    ///   - screen: The destination screen.
+    ///   - style: The navigation style (push, sheet, cover, popover). Defaults to `.push`.
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func navigate(
         to screen: Screen,
         style: NavigationStyle = .push,
@@ -52,6 +58,10 @@ public extension RootNavigationController {
         }
     }
 
+    /// Pops all screens and dismisses all presentations, returning to the root screen.
+    /// - Parameters:
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func popToRoot(
         animated: Bool = true,
         completion: @escaping () -> Void = {}
@@ -64,6 +74,10 @@ public extension RootNavigationController {
         }
     }
 
+    /// Pops the topmost screen or dismisses the topmost presentation.
+    /// - Parameters:
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func pop(
         animated: Bool = true,
         completion: @escaping () -> Void = {}
@@ -84,6 +98,11 @@ public extension RootNavigationController {
         }
     }
 
+    /// Pops screens until the specified element is at the top, then removes it too.
+    /// - Parameters:
+    ///   - element: The element to pop before.
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func popBefore(
         _ element: Screen,
         animated: Bool = true,
@@ -108,6 +127,11 @@ public extension RootNavigationController {
         }
     }
 
+    /// Pops screens until the specified element is at the top.
+    /// - Parameters:
+    ///   - element: The destination element.
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func popTo(
         _ element: Screen,
         animated: Bool = true,
@@ -132,6 +156,10 @@ public extension RootNavigationController {
         }
     }
 
+    /// Pops all screens in the topmost presentation, but keeps the presentation itself.
+    /// - Parameters:
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func popToPresentationRoot(
         animated: Bool = true,
         completion: @escaping () -> Void = {}

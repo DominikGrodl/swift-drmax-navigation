@@ -10,6 +10,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
+/// Represents an active presentation in the navigation tree.
 @_spi(Testing)
 public enum Presentation<Screen: Hashable> {
     case sheet(PresentedNavigationController<Screen>)
@@ -22,6 +23,7 @@ public enum Presentation<Screen: Hashable> {
     case cover(PresentedNavigationController<Screen>)
     #endif
 
+    /// The ``PresentedNavigationController`` associated with this presentation.
     public var controller: PresentedNavigationController<Screen> {
         switch self {
         case let .sheet(controller): controller

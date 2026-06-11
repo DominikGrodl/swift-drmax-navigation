@@ -12,15 +12,22 @@
 
 import Observation
 
+/// A specialized ``RootNavigationController`` used for presented navigation trees (sheets, covers, popovers).
 @_spi(Testing)
 @Observable
 public final class PresentedNavigationController<Screen: Hashable>: RootNavigationController<Screen> {
+    /// Whether this presentation allows interactive dismissal (e.g., swiping down on a sheet).
     let allowsInteractiveDismiss: Bool
 
+    /// The complete path to use when searching for children.
     override var completePath: [Screen] {
         [root].compactMap { $0 } + path + (presentation?.controller.completePath ?? [])
     }
 
+    /// Creates a new presented navigation controller.
+    /// - Parameters:
+    ///   - root: The initial screen of the presentation.
+    ///   - allowsInteractiveDismiss: Whether to allow interactive dismissal.
     init(
         root: Screen,
         allowsInteractiveDismiss: Bool

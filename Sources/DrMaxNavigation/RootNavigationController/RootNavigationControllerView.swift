@@ -12,6 +12,19 @@
 
 import SwiftUI
 
+/// A SwiftUI view that renders a ``RootNavigationController``.
+///
+/// This view handles the rendering of the root screen, the navigation stack, and any active presentations.
+/// It recursively renders itself for any presented navigation controllers.
+///
+/// ```swift
+/// RootNavigationControllerView(controller: myCoordinator.controller) { screen in
+///     switch screen {
+///     case .home: HomeView()
+///     case .detail: DetailView()
+///     }
+/// }
+/// ```
 public struct RootNavigationControllerView<
     Screen: Hashable,
     ScreenView: View
@@ -73,6 +86,15 @@ private extension View {
     func presentationModifiers(dismissable: Bool) -> some View {
         self
             .interactiveDismissDisabled(!dismissable)
-            .presentationBackground(.background)
+            .conditionalPresentationBackground()
+    }
+    
+    @ViewBuilder
+    func conditionalPresentationBackground() -> some View {
+        if #available(iOS 18.0, *) {
+            self.presentationBackground(.background)
+        } else {
+            self
+        }
     }
 }

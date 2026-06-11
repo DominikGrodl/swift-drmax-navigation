@@ -16,7 +16,7 @@ import CasePaths
 ///
 /// Use this when a feature/section owns only a slice of the parent `Screen` enum.
 /// It embeds `Child` values into `Parent` via a `CaseKeyPath` before
-/// forwarding every navigation call to the underlying `RootNavigationController`.
+/// forwarding every navigation call to the underlying ``RootNavigationController``.
 ///
 /// ```swift
 /// @CasePathable
@@ -49,6 +49,12 @@ public struct NavigationController<Parent: Hashable, Child: Hashable> {
 
 // MARK: - Public API
 public extension NavigationController {
+    /// Navigates to a new screen in the scoped child enum.
+    /// - Parameters:
+    ///   - screen: The destination screen in the child enum.
+    ///   - style: The navigation style. Defaults to `.push`.
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func navigate(
         to screen: Child,
         style: NavigationStyle = .push,
@@ -58,6 +64,10 @@ public extension NavigationController {
         parent.navigate(to: casePath(screen), style: style, animated: animated, completion: completion)
     }
 
+    /// Pops the topmost screen or dismisses the topmost presentation.
+    /// - Parameters:
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func pop(
         animated: Bool = true,
         completion: @escaping () -> Void = {}
@@ -65,6 +75,10 @@ public extension NavigationController {
         parent.pop(animated: animated, completion: completion)
     }
 
+    /// Pops all screens and dismisses all presentations in the parent controller.
+    /// - Parameters:
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func popToRoot(
         animated: Bool = true,
         completion: @escaping () -> Void = {}
@@ -72,6 +86,10 @@ public extension NavigationController {
         parent.popToRoot(animated: animated, completion: completion)
     }
 
+    /// Pops all screens in the topmost presentation.
+    /// - Parameters:
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func popToPresentationRoot(
         animated: Bool = true,
         completion: @escaping () -> Void = {}
@@ -85,12 +103,19 @@ public extension NavigationController {
 
 // MARK: - Public CasePathable API
 public extension NavigationController where Child: CasePathable, Parent: CasePathable {
+    /// Pops all screens until the screen that triggered this pullback is at the top, then removes it too.
+    /// - Parameter animated: Whether to animate the transition. Defaults to `true`.
     func popToPullbackRoot(animated: Bool = true) {
         if let screen = parent.completePath.compactMap({ $0[case: casePath] }).first {
             parent.popBefore(casePath(screen), animated: animated)
         }
     }
 
+    /// Pops screens until the specified element in the child enum is at the top, then removes it too.
+    /// - Parameters:
+    ///   - element: The element to pop before.
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func popBefore(
         _ element: PartialCaseKeyPath<Child>,
         animated: Bool = true,
@@ -105,6 +130,11 @@ public extension NavigationController where Child: CasePathable, Parent: CasePat
         }
     }
 
+    /// Pops screens until the specified element in the child enum is at the top.
+    /// - Parameters:
+    ///   - element: The destination element.
+    ///   - animated: Whether to animate the transition. Defaults to `true`.
+    ///   - completion: A closure to execute after the transition finishes.
     func popTo(
         _ element: PartialCaseKeyPath<Child>,
         animated: Bool = true,

@@ -13,6 +13,9 @@
 import CasePaths
 
 public extension RootNavigationController {
+    /// Scopes the navigation controller to a child screen enum.
+    /// - Parameter child: A case key path to the child screen enum.
+    /// - Returns: A `NavigationController` that maps child navigation to the parent.
     func pullback<Child: Hashable>(
         on child: CaseKeyPath<Screen, Child>
     ) -> NavigationController<Screen, Child> {

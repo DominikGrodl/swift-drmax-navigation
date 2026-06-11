@@ -12,6 +12,7 @@
 
 @_spi(Internal)
 public extension RootNavigationController {
+    /// Supported presentation styles.
     enum PresentationStyle {
         case sheet
 
@@ -24,8 +25,11 @@ public extension RootNavigationController {
         #endif
     }
 
+    /// The result of searching for an element's location in the navigation tree.
     enum ElementLocationResult {
+        /// The element was found at a specific index in a navigation stack.
         case index(controller: RootNavigationController, index: Array<Screen>.Index)
+        /// The element was found as the root of a presented navigation tree.
         case root(parentController: RootNavigationController)
     }
 }
