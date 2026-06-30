@@ -161,3 +161,21 @@ private extension NavigationController where Child: CasePathable, Parent: CasePa
             .first { $0.is(element) }
     }
 }
+
+extension NavigationController where Parent: CaseEquatable {
+    public func navigate(
+        to screen: Child,
+        style: NavigationStyle = .push,
+        animated: Bool = true,
+        allowsSameScreenNesting: Bool = true,
+        completion: @escaping () -> Void = {}
+    ) {
+        parent.navigate(
+            to: casePath(screen),
+            style: style,
+            animated: animated,
+            allowsSameScreenNesting: allowsSameScreenNesting,
+            completion: completion
+        )
+    }
+}
