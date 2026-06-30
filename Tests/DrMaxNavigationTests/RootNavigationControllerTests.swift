@@ -377,4 +377,17 @@ struct CasePathableDestinationTests {
         #expect(controller.path == [.two, .three])
         #expect(controller.presentation == nil)
     }
+    
+    @Test
+    func navigateCorrectlyDisallowsNesting() {
+        let controller = RootNavigationController<Destination>(
+            root: .one,
+            path: [.one, .two, .three, .two]
+        )
+        
+        controller.navigate(to: .two, allowsSameScreenNesting: false)
+        
+        #expect(controller.path == [.one, .two])
+        #expect(controller.presentation == nil)
+    }
 }

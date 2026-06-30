@@ -2,7 +2,7 @@ import CasePaths
 import DrMaxNavigation
 
 @CasePathable
-enum Destination: Hashable {
+enum Destination: Hashable, CaseEquatable {
     case one, two, three, four
     case child(ChildDestination)
 }

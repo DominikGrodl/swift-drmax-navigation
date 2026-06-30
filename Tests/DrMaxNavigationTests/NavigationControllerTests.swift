@@ -261,4 +261,19 @@ struct PlainNavigationControllerDestinationTest {
 
         #expect(parent.path == [.two, .three])
     }
+    
+    @Test
+    func navigateCorrectlyDisallowsNesting() {
+        let parent = RootNavigationController<Destination>(
+            root: .one,
+            path: [.one, .child(.childOne), .two, .three, .child(.childTwo)]
+        )
+        
+        let controller = parent.pullback(on: \.child)
+        
+        controller.navigate(to: .childOne, allowsSameScreenNesting: false)
+        
+        #expect(parent.path == [.one, .child(.childOne)])
+        #expect(parent.presentation == nil)
+    }
 }
