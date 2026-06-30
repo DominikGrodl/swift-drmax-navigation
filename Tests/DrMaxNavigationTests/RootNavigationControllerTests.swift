@@ -40,7 +40,7 @@ struct PlainDestinationTests {
             path: [.one, .two]
         )
 
-        controller.navigate(to: .one, style: .cover)
+        controller.navigate(to: .one, style: .sheet)
         controller.navigate(to: .two, style: .sheet)
 
         controller.navigate(to: .four)
@@ -59,7 +59,7 @@ struct PlainDestinationTests {
             path: [.one, .two]
         )
 
-        controller.navigate(to: .one, style: .cover)
+        controller.navigate(to: .one, style: .sheet)
         controller.navigate(to: .two, style: .sheet)
 
         controller.navigate(to: .four)
@@ -99,7 +99,8 @@ struct PlainDestinationTests {
 
         #expect(stateCorrect)
     }
-
+    
+    #if !os(macOS)
     @Test
     func presentingCoverPresentsCover() {
         let controller = RootNavigationController<Destination>(root: .one)
@@ -112,7 +113,8 @@ struct PlainDestinationTests {
 
         #expect(stateCorrect)
     }
-
+    #endif
+    
     #if !os(watchOS)
     @Test
     func presentingPopoverPresentsPopover() {
@@ -150,7 +152,7 @@ struct PlainDestinationTests {
 
         controller.navigate(
             to: .four,
-            style: .cover
+            style: .sheet
         )
 
         #expect(controller.presentation != nil)
@@ -169,7 +171,7 @@ struct PlainDestinationTests {
             path: [.two, .three]
         )
 
-        controller.navigate(to: .four, style: .cover)
+        controller.navigate(to: .four, style: .sheet)
 
         controller.popToRoot()
 
@@ -196,7 +198,7 @@ struct PlainDestinationTests {
             path: [.two, .three]
         )
 
-        controller.navigate(to: .four, style: .cover)
+        controller.navigate(to: .four, style: .sheet)
 
         controller.popBefore(.four)
 
@@ -223,7 +225,7 @@ struct PlainDestinationTests {
             path: [.two, .three]
         )
 
-        controller.navigate(to: .four, style: .cover)
+        controller.navigate(to: .four, style: .sheet)
 
         #expect(controller.presentation != nil)
 
@@ -264,7 +266,7 @@ struct PlainDestinationTests {
             path: [.two, .three]
         )
 
-        controller.navigate(to: .four, style: .cover)
+        controller.navigate(to: .four, style: .sheet)
 
         #expect(controller.presentation != nil)
 
@@ -278,7 +280,7 @@ struct PlainDestinationTests {
     func popToPresentationRootShouldPopLastPresentationPath() {
         let controller = RootNavigationController<Destination>()
         controller.navigate(to: .one)
-        controller.navigate(to: .two, style: .cover)
+        controller.navigate(to: .two, style: .sheet)
         controller.navigate(to: .three)
         controller.navigate(to: .four)
 
@@ -327,7 +329,7 @@ struct CasePathableDestinationTests {
             path: [.two, .three]
         )
 
-        controller.navigate(to: .four, style: .cover)
+        controller.navigate(to: .four, style: .sheet)
 
         #expect(controller.presentation != nil)
 
@@ -368,7 +370,7 @@ struct CasePathableDestinationTests {
             path: [.two, .three]
         )
 
-        controller.navigate(to: .four, style: .cover)
+        controller.navigate(to: .four, style: .sheet)
 
         #expect(controller.presentation != nil)
 
