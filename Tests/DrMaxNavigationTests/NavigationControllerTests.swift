@@ -20,7 +20,7 @@ struct PlainNavigationControllerDestinationTest {
         let parent = RootNavigationController<Destination>()
 
         let controller = parent.pullback(on: \.child)
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
 
         #expect(parent.presentation!.controller.root == .child(.childOne))
     }
@@ -30,7 +30,7 @@ struct PlainNavigationControllerDestinationTest {
         let parent = RootNavigationController<Destination>()
 
         let controller = parent.pullback(on: \.child)
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
 
         #expect(parent.presentation!.controller.root == .child(.childOne))
 
@@ -44,11 +44,11 @@ struct PlainNavigationControllerDestinationTest {
         let parent = RootNavigationController<Destination>()
 
         let controller = parent.pullback(on: \.child)
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
 
         #expect(parent.presentation!.controller.root == .child(.childOne))
 
-        controller.navigate(to: .childTwo, style: .cover)
+        controller.navigate(to: .childTwo, style: .sheet)
 
         #expect(parent.presentation!.controller.presentation!.controller.root == .child(.childTwo))
     }
@@ -70,7 +70,7 @@ struct PlainNavigationControllerDestinationTest {
         let parent = RootNavigationController<Destination>(root: .one)
 
         let controller = parent.pullback(on: \.child)
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
 
         #expect(parent.presentation != nil)
 
@@ -84,7 +84,7 @@ struct PlainNavigationControllerDestinationTest {
         let parent = RootNavigationController<Destination>(root: .one)
 
         let controller = parent.pullback(on: \.child)
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
         controller.navigate(to: .childTwo)
         controller.navigate(to: .childThree)
 
@@ -100,7 +100,7 @@ struct PlainNavigationControllerDestinationTest {
         let parent = RootNavigationController<Destination>(root: .one)
 
         let controller = parent.pullback(on: \.child)
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
         controller.navigate(to: .childTwo)
 
         #expect(parent.presentation!.controller.path == [.child(.childTwo)])
@@ -118,7 +118,7 @@ struct PlainNavigationControllerDestinationTest {
 
         let controller = parent.pullback(on: \.child)
 
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
         controller.navigate(to: .childTwo)
 
         #expect(parent.path == [.four, .three])
@@ -170,7 +170,7 @@ struct PlainNavigationControllerDestinationTest {
     func popToPropagatesToNestedParent() async throws {
         let parent = RootNavigationController<Destination>(root: .one)
         parent.navigate(to: .one)
-        parent.navigate(to: .two, style: .cover)
+        parent.navigate(to: .two, style: .sheet)
 
         let controller = parent.pullback(on: \.child)
 
@@ -188,7 +188,7 @@ struct PlainNavigationControllerDestinationTest {
     func popBeforePropagatesToNestedParent() async throws {
         let parent = RootNavigationController<Destination>(root: .one)
         parent.navigate(to: .one)
-        parent.navigate(to: .two, style: .cover)
+        parent.navigate(to: .two, style: .sheet)
 
         let controller = parent.pullback(on: \.child)
 
@@ -208,7 +208,7 @@ struct PlainNavigationControllerDestinationTest {
 
         let controller = parent.pullback(on: \.child)
 
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
 
         #expect(parent.presentation!.controller.root == .child(.childOne))
         controller.popBefore(\.childOne)
@@ -238,7 +238,7 @@ struct PlainNavigationControllerDestinationTest {
         let parent = RootNavigationController<Destination>(root: .one)
         let controller = parent.pullback(on: \.child)
 
-        controller.navigate(to: .childOne, style: .cover)
+        controller.navigate(to: .childOne, style: .sheet)
         controller.navigate(to: .childTwo)
 
         #expect(parent.presentation?.controller.root == .child(.childOne))
