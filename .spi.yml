@@ -1,0 +1,12 @@
+version: 1
+builder:
+  configs:
+  - platform: ios
+    scheme: DrMaxNavigation
+  - platform: macos-xcodebuild
+    scheme: DrMaxNavigation
+  - platform: tvos
+    scheme: DrMaxNavigation
+  - platform: watchos
+    scheme: DrMaxNavigation
+  - documentation_targets: [DrMaxNavigation]
