@@ -45,6 +45,10 @@ public struct NavigationController<Parent: Hashable, Child: Hashable> {
         self.parent = parent
         self.casePath = casePath
     }
+    
+    public var currentScreen: Parent? {
+        parent.currentScreen
+    }
 }
 
 // MARK: - Public API

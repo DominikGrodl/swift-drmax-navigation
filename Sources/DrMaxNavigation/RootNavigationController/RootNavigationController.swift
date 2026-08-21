@@ -62,6 +62,10 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
         precondition(self.root == nil)
         self.root = screen
     }
+    
+    public var currentScreen: Screen? {
+        completePath.last ?? root
+    }
 }
 
 // MARK: - Private Methods
