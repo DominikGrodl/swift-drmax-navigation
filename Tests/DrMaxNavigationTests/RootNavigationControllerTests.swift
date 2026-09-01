@@ -506,9 +506,3 @@ struct CasePathableDestinationTests {
         #expect(controller.presentation == nil)
     }
 }
-
-private extension Array where Element: Hashable {
-    func asNavigationElements() -> [NavigationElement<Element>] {
-        self.map { NavigationElement(wrapped: $0, wasNavigatedWithAnimation: true) }
-    }
-}
