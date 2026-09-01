@@ -31,16 +31,13 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
     public var path: [NavigationElement<Screen>]
     public internal(set) var presentation: Presentation<Screen>?
 
-    /// Creates a new navigation controller.
-    /// - Parameters:
-    ///   - root: The initial screen to display.
-    ///   - path: The initial stack of pushed screens.
-    public init(
+    init(
         root: Screen? = nil,
-        path: [Screen] = []
+        path: [Screen] = [],
+        rootSetWithAnimation: Bool
     ) {
         if let root {
-            self.root = NavigationElement(wrapped: root, wasNavigatedWithAnimation: true)
+            self.root = NavigationElement(wrapped: root, wasNavigatedWithAnimation: rootSetWithAnimation)
         }
         
         self.path = path.map { NavigationElement(wrapped: $0, wasNavigatedWithAnimation: true) }
@@ -94,17 +91,19 @@ public extension RootNavigationController {
         from controller: RootNavigationController,
         completion: @escaping () -> Void
     ) {
-        let desired = controller.path.index(after: index)
+        let poppedElementIndex = controller.path.index(after: index)
         
-        guard controller.path.indices.contains(desired) else {
-            return
+        let animated: Bool
+        
+        if index == controller.path.indices.last {
+            animated = controller.presentation?.controller.root?.wasNavigatedWithAnimation ?? false
+        } else {
+            animated = controller.path[poppedElementIndex].wasNavigatedWithAnimation
         }
-        
-        let animated = controller.path[desired].wasNavigatedWithAnimation
         
         Transaction.conditionalyDisableAnimations(animated: animated) {
             controller.presentation = nil
-            controller.path.removeSubrange(desired...)
+            controller.path.removeSubrange(poppedElementIndex...)
         } completion: {
             completion()
         }
@@ -128,7 +127,10 @@ public extension RootNavigationController {
         to controller: RootNavigationController,
         completion: @escaping () -> Void
     ) {
-        guard let presentation = controller.presentation else { return }
+        guard let presentation = controller.presentation else {
+            return
+        }
+        
         let animated = presentation.controller.root?.wasNavigatedWithAnimation ?? true
         
         Transaction.conditionalyDisableAnimations(animated: animated) {
@@ -169,6 +171,7 @@ public extension RootNavigationController {
         } else {
             let controller = PresentedNavigationController(
                 root: screen,
+                animated: animated,
                 allowsInteractiveDismiss: dismissable
             )
 
@@ -204,6 +207,19 @@ public extension RootNavigationController {
         }
 
         return presentation?.controller.location(of: element, equals: equals)
+    }
+}
+
+public extension RootNavigationController {
+    /// Creates a new navigation controller.
+    /// - Parameters:
+    ///   - root: The initial screen to display.
+    ///   - path: The initial stack of pushed screens.
+    convenience init(
+        root: Screen? = nil,
+        path: [Screen] = []
+    ) {
+        self.init(root: root, path: path, rootSetWithAnimation: true)
     }
 }
 

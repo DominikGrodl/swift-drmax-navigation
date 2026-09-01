@@ -30,13 +30,15 @@ public final class PresentedNavigationController<Screen: Hashable>: RootNavigati
     ///   - allowsInteractiveDismiss: Whether to allow interactive dismissal.
     init(
         root: Screen,
+        animated: Bool,
         allowsInteractiveDismiss: Bool
     ) {
         self.allowsInteractiveDismiss = allowsInteractiveDismiss
 
         super.init(
             root: root,
-            path: []
+            path: [],
+            rootSetWithAnimation: animated
         )
     }
 }
