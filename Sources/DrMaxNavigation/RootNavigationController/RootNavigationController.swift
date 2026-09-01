@@ -63,7 +63,7 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
     /// - Note: This can only be called once, typically if the controller was initialized without a root.
     public func set(root screen: Screen) {
         precondition(self.root == nil)
-        self.root = NavigationElement(wrapped: screen, wasNavigatedWithAnimation: true)
+        self.root = NavigationElement(wrapped: screen, wasNavigatedWithAnimation: false)
     }
 }
 
