@@ -79,16 +79,17 @@ public extension RootNavigationController {
     ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func pop(
-        animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
         if let presentation {
             if presentation.controller.path.isEmpty && presentation.controller.presentation == nil {
                 self.presentation = nil
             } else {
-                presentation.controller.pop(animated: animated, completion: completion)
+                presentation.controller.pop(completion: completion)
             }
         } else {
+            guard let animated = path.last?.wasNavigatedWithAnimation else { return }
+            
             Transaction.conditionalyDisableAnimations(animated: animated) {
                 guard !path.isEmpty else { return }
                 path.removeLast()
@@ -105,7 +106,6 @@ public extension RootNavigationController {
     ///   - completion: A closure to execute after the transition finishes.
     func popBefore(
         _ element: Screen,
-        animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
         switch location(
@@ -115,12 +115,10 @@ public extension RootNavigationController {
         case let .index(controller, index): remove(
             index: index,
             from: controller,
-            animated: animated,
             completion: completion
         )
         case let .root(parentController): dismiss(
             from: parentController,
-            animated: animated,
             completion: completion
         )
         case nil: break
@@ -134,7 +132,6 @@ public extension RootNavigationController {
     ///   - completion: A closure to execute after the transition finishes.
     func popTo(
         _ element: Screen,
-        animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
         switch location(
@@ -144,12 +141,10 @@ public extension RootNavigationController {
         case let .index(controller, index): removeAfter(
             index: index,
             from: controller,
-            animated: animated,
             completion: completion
         )
         case let .root(parentController): dismiss(
             to: parentController,
-            animated: animated,
             completion: completion
         )
         case nil: break

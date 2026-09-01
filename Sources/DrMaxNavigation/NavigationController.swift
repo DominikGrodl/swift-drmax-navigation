@@ -33,7 +33,6 @@ import CasePaths
 /// child.navigate(to: .detail(id: "42"))    // pushes AppScreen.dashboard(.detail(id: "42"))
 /// ```
 public struct NavigationController<Parent: Hashable, Child: Hashable> {
-    @_spi(Internal)
     public let parent: RootNavigationController<Parent>
 
     private let casePath: CaseKeyPath<Parent, Child>
@@ -72,7 +71,7 @@ public extension NavigationController {
         animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
-        parent.pop(animated: animated, completion: completion)
+        parent.pop(completion: completion)
     }
 
     /// Pops all screens and dismisses all presentations in the parent controller.
@@ -105,9 +104,9 @@ public extension NavigationController {
 public extension NavigationController where Child: CasePathable, Parent: CasePathable {
     /// Pops all screens until the screen that triggered this pullback is at the top, then removes it too.
     /// - Parameter animated: Whether to animate the transition. Defaults to `true`.
-    func popToPullbackRoot(animated: Bool = true) {
-        if let screen = parent.completePath.compactMap({ $0[case: casePath] }).first {
-            parent.popBefore(casePath(screen), animated: animated)
+    func popToPullbackRoot() {
+        if let screen = parent.completePath.compactMap({ $0.wrapped[case: casePath] }).first {
+            parent.popBefore(casePath(screen))
         }
     }
 
@@ -118,13 +117,11 @@ public extension NavigationController where Child: CasePathable, Parent: CasePat
     ///   - completion: A closure to execute after the transition finishes.
     func popBefore(
         _ element: PartialCaseKeyPath<Child>,
-        animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
         if let screen = find(element) {
             parent.popBefore(
                 casePath(screen),
-                animated: animated,
                 completion: completion
             )
         }
@@ -137,13 +134,11 @@ public extension NavigationController where Child: CasePathable, Parent: CasePat
     ///   - completion: A closure to execute after the transition finishes.
     func popTo(
         _ element: PartialCaseKeyPath<Child>,
-        animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
         if let screen = find(element) {
             parent.popTo(
                 casePath(screen),
-                animated: animated,
                 completion: completion
             )
         }
@@ -157,7 +152,7 @@ private extension NavigationController where Child: CasePathable, Parent: CasePa
     ) -> Child? {
         parent
             .completePath
-            .compactMap { $0[case: casePath] }
+            .compactMap { $0.wrapped[case: casePath] }
             .first { $0.is(element) }
     }
 }

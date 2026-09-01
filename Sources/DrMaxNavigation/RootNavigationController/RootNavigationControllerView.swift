@@ -43,8 +43,8 @@ public struct RootNavigationControllerView<
     public var body: some View {
         NavigationStack(path: $controller.path) {
             root
-                .navigationDestination(for: Screen.self) {
-                    screen($0)
+                .navigationDestination(for: NavigationElement<Screen>.self) {
+                    screen($0.wrapped)
                 }
         }
         .sheet(item: $controller.sheet) { controller in
@@ -76,7 +76,7 @@ public struct RootNavigationControllerView<
 
     @ViewBuilder
     private var root: some View {
-        if let root = controller.root {
+        if let root = controller.root?.wrapped {
             screen(root)
         }
     }

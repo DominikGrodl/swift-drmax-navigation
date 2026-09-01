@@ -20,7 +20,7 @@ public final class PresentedNavigationController<Screen: Hashable>: RootNavigati
     public let allowsInteractiveDismiss: Bool
 
     /// The complete path to use when searching for children.
-    override var completePath: [Screen] {
+    override var completePath: [NavigationElement<Screen>] {
         [root].compactMap { $0 } + path + (presentation?.controller.completePath ?? [])
     }
 

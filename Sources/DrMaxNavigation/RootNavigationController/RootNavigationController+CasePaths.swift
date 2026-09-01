@@ -31,12 +31,10 @@ extension RootNavigationController where Screen: CasePathable {
         case let .index(controller, index): remove(
             index: index,
             from: controller,
-            animated: animated,
             completion: completion
         )
         case let .root(controller): dismiss(
             from: controller,
-            animated: animated,
             completion: completion
         )
         case nil: break
@@ -61,12 +59,10 @@ extension RootNavigationController where Screen: CasePathable {
         case let .index(controller, index): removeAfter(
             index: index,
             from: controller,
-            animated: animated,
             completion: completion
         )
         case let .root(controller): dismiss(
             to: controller,
-            animated: animated,
             completion: completion
         )
         case nil: break
