@@ -319,6 +319,92 @@ struct PlainDestinationTests {
         )
         #expect(controller.presentation!.controller.path.isEmpty)
     }
+    
+    @Test
+    func pushingWithoutAnimationSetsElementFlag() {
+        let controller = RootNavigationController<Destination>()
+        controller.navigate(to: .one, animated: true)
+        controller.navigate(to: .two, animated: false)
+        controller.navigate(to: .three, animated: true)
+        
+        #expect(
+            controller.path == [
+                NavigationElement(wrapped: .one, wasNavigatedWithAnimation: true),
+                NavigationElement(wrapped: .two, wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .three, wasNavigatedWithAnimation: true),
+            ]
+        )
+    }
+    
+    @Test
+    func presentingSheetWithoutAnimationSetsElementFlag() {
+        let controller = RootNavigationController<Destination>()
+        controller.navigate(to: .one, style: .sheet, animated: false)
+        controller.navigate(to: .two, animated: false)
+        controller.navigate(to: .three, animated: true)
+        
+        #expect(
+            controller.presentation?.controller.root == NavigationElement(
+                wrapped: .one,
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            controller.presentation?.controller.path == [
+                NavigationElement(wrapped: .two, wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .three, wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    
+    #if !os(watchOS)
+    @Test
+    func presentingPopoverWithoutAnimationSetsElementFlag() {
+        let controller = RootNavigationController<Destination>()
+        controller.navigate(to: .one, style: .popover, animated: false)
+        controller.navigate(to: .two, animated: false)
+        controller.navigate(to: .three, animated: true)
+        
+        #expect(
+            controller.presentation?.controller.root == NavigationElement(
+                wrapped: .one,
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            controller.presentation?.controller.path == [
+                NavigationElement(wrapped: .two, wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .three, wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    #endif
+    
+    #if !os(macOS)
+    @Test
+    func presentingCoverWithoutAnimationSetsElementFlag() {
+        let controller = RootNavigationController<Destination>()
+        controller.navigate(to: .one, style: .cover, animated: false)
+        controller.navigate(to: .two, animated: false)
+        controller.navigate(to: .three, animated: true)
+        
+        #expect(
+            controller.presentation?.controller.root == NavigationElement(
+                wrapped: .one,
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            controller.presentation?.controller.path == [
+                NavigationElement(wrapped: .two, wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .three, wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    #endif
 }
 
 @Suite("CasePathable Destination conforming tests")

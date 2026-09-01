@@ -306,6 +306,97 @@ struct PlainNavigationControllerDestinationTest {
         #expect(parent.path == [.one, .child(.childOne)].asNavigationElements())
         #expect(parent.presentation == nil)
     }
+    
+    @Test
+    func pushingWithoutAnimationSetsElementFlag() {
+        let parent = RootNavigationController<Destination>()
+        
+        let controller = parent.pullback(on: \.child)
+        controller.navigate(to: .childOne, animated: true)
+        controller.navigate(to: .childTwo, animated: false)
+        controller.navigate(to: .childThree, animated: true)
+        
+        #expect(
+            parent.path == [
+                NavigationElement(wrapped: .child(.childOne), wasNavigatedWithAnimation: true),
+                NavigationElement(wrapped: .child(.childTwo), wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .child(.childThree), wasNavigatedWithAnimation: true),
+            ]
+        )
+    }
+    
+    @Test
+    func presentingSheetWithoutAnimationSetsElementFlag() {
+        let parent = RootNavigationController<Destination>()
+        let controller = parent.pullback(on: \.child)
+        controller.navigate(to: .childOne, style: .sheet, animated: false)
+        controller.navigate(to: .childTwo, animated: false)
+        controller.navigate(to: .childThree, animated: true)
+        
+        #expect(
+            parent.presentation?.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            parent.presentation?.controller.path == [
+                NavigationElement(wrapped: .child(.childTwo), wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .child(.childThree), wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    
+    #if !os(watchOS)
+    @Test
+    func presentingPopoverWithoutAnimationSetsElementFlag() {
+        let parent = RootNavigationController<Destination>()
+        let controller = parent.pullback(on: \.child)
+        controller.navigate(to: .childOne, style: .popover, animated: false)
+        controller.navigate(to: .childTwo, animated: false)
+        controller.navigate(to: .childThree, animated: true)
+        
+        #expect(
+            parent.presentation?.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            parent.presentation?.controller.path == [
+                NavigationElement(wrapped: .child(.childTwo), wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .child(.childThree), wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    #endif
+    
+    #if !os(macOS)
+    @Test
+    func presentingCoverWithoutAnimationSetsElementFlag() {
+        let parent = RootNavigationController<Destination>()
+        let controller = parent.pullback(on: \.child)
+        controller.navigate(to: .childOne, style: .cover, animated: false)
+        controller.navigate(to: .childTwo, animated: false)
+        controller.navigate(to: .childThree, animated: true)
+        
+        #expect(
+            parent.presentation?.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            parent.presentation?.controller.path == [
+                NavigationElement(wrapped: .child(.childTwo), wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .child(.childThree), wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    #endif
 }
 
 private extension Array where Element: Hashable {
