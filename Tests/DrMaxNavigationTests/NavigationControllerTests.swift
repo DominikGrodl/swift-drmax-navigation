@@ -12,7 +12,7 @@ struct PlainNavigationControllerDestinationTest {
         let controller = parent.pullback(on: \.child)
         controller.navigate(to: .childOne)
 
-        #expect(parent.path == [.two, .three, .child(.childOne)])
+        #expect(parent.path == [.two, .three, .child(.childOne)].asNavigationElements())
     }
 
     @Test
@@ -22,7 +22,12 @@ struct PlainNavigationControllerDestinationTest {
         let controller = parent.pullback(on: \.child)
         controller.navigate(to: .childOne, style: .sheet)
 
-        #expect(parent.presentation!.controller.root == .child(.childOne))
+        #expect(
+            parent.presentation!.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: true
+            )
+        )
     }
 
     @Test
@@ -32,11 +37,16 @@ struct PlainNavigationControllerDestinationTest {
         let controller = parent.pullback(on: \.child)
         controller.navigate(to: .childOne, style: .sheet)
 
-        #expect(parent.presentation!.controller.root == .child(.childOne))
+        #expect(
+            parent.presentation!.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: true
+                )
+        )
 
         controller.navigate(to: .childTwo)
 
-        #expect(parent.presentation!.controller.path == [.child(.childTwo)])
+        #expect(parent.presentation!.controller.path == [.child(.childTwo)].asNavigationElements())
     }
 
     @Test
@@ -46,11 +56,21 @@ struct PlainNavigationControllerDestinationTest {
         let controller = parent.pullback(on: \.child)
         controller.navigate(to: .childOne, style: .sheet)
 
-        #expect(parent.presentation!.controller.root == .child(.childOne))
+        #expect(
+            parent.presentation!.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: true
+            )
+        )
 
         controller.navigate(to: .childTwo, style: .sheet)
 
-        #expect(parent.presentation!.controller.presentation!.controller.root == .child(.childTwo))
+        #expect(
+            parent.presentation!.controller.presentation!.controller.root == NavigationElement(
+                wrapped: .child(.childTwo),
+                wasNavigatedWithAnimation: true
+            )
+        )
     }
 
     @Test
@@ -62,7 +82,7 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childTwo)
         controller.pop()
 
-        #expect(parent.path == [.child(.childOne)])
+        #expect(parent.path == [.child(.childOne)].asNavigationElements())
     }
 
     @Test
@@ -88,11 +108,11 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childTwo)
         controller.navigate(to: .childThree)
 
-        #expect(parent.presentation!.controller.path == [.child(.childTwo), .child(.childThree)])
+        #expect(parent.presentation!.controller.path == [.child(.childTwo), .child(.childThree)].asNavigationElements())
 
         controller.pop()
 
-        #expect(parent.presentation!.controller.path == [.child(.childTwo)])
+        #expect(parent.presentation!.controller.path == [.child(.childTwo)].asNavigationElements())
     }
 
     @Test
@@ -103,7 +123,7 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childOne, style: .sheet)
         controller.navigate(to: .childTwo)
 
-        #expect(parent.presentation!.controller.path == [.child(.childTwo)])
+        #expect(parent.presentation!.controller.path == [.child(.childTwo)].asNavigationElements())
 
         controller.pop()
 
@@ -121,8 +141,8 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childOne, style: .sheet)
         controller.navigate(to: .childTwo)
 
-        #expect(parent.path == [.four, .three])
-        #expect(parent.presentation!.controller.path == [.child(.childTwo)])
+        #expect(parent.path == [.four, .three].asNavigationElements())
+        #expect(parent.presentation!.controller.path == [.child(.childTwo)].asNavigationElements())
 
         controller.popToRoot()
 
@@ -141,11 +161,11 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childOne)
         parent.navigate(to: .three)
 
-        #expect(parent.path == [.one, .two, .child(.childOne), .three])
+        #expect(parent.path == [.one, .two, .child(.childOne), .three].asNavigationElements())
 
         controller.popBefore(\.childOne)
 
-        #expect(parent.path == [.one, .two])
+        #expect(parent.path == [.one, .two].asNavigationElements())
     }
 
     @Test
@@ -159,11 +179,11 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childOne)
         parent.navigate(to: .three)
 
-        #expect(parent.path == [.one, .two, .child(.childOne), .three])
+        #expect(parent.path == [.one, .two, .child(.childOne), .three].asNavigationElements())
 
         controller.popTo(\.childOne)
 
-        #expect(parent.path == [.one, .two, .child(.childOne)])
+        #expect(parent.path == [.one, .two, .child(.childOne)].asNavigationElements())
     }
 
     @Test
@@ -177,11 +197,11 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childOne)
         parent.navigate(to: .three)
 
-        #expect(parent.presentation?.controller.path == [.child(.childOne), .three])
+        #expect(parent.presentation?.controller.path == [.child(.childOne), .three].asNavigationElements())
 
         controller.popTo(\.childOne)
 
-        #expect(parent.presentation?.controller.path == [.child(.childOne)])
+        #expect(parent.presentation?.controller.path == [.child(.childOne)].asNavigationElements())
     }
 
     @Test
@@ -195,7 +215,7 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childOne)
         parent.navigate(to: .three)
 
-        #expect(parent.presentation?.controller.path == [.child(.childOne), .three])
+        #expect(parent.presentation?.controller.path == [.child(.childOne), .three].asNavigationElements())
 
         controller.popBefore(\.childOne)
 
@@ -210,7 +230,12 @@ struct PlainNavigationControllerDestinationTest {
 
         controller.navigate(to: .childOne, style: .sheet)
 
-        #expect(parent.presentation!.controller.root == .child(.childOne))
+        #expect(
+            parent.presentation!.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: true
+            )
+        )
         controller.popBefore(\.childOne)
         #expect(parent.presentation == nil)
     }
@@ -226,11 +251,11 @@ struct PlainNavigationControllerDestinationTest {
         parent.navigate(to: .three)
         controller.navigate(to: .childTwo)
 
-        #expect(parent.path == [.two, .child(.childOne), .three, .child(.childTwo)])
+        #expect(parent.path == [.two, .child(.childOne), .three, .child(.childTwo)].asNavigationElements())
 
         controller.popToPullbackRoot()
 
-        #expect(parent.path == [.two])
+        #expect(parent.path == [.two].asNavigationElements())
     }
 
     @Test
@@ -241,8 +266,13 @@ struct PlainNavigationControllerDestinationTest {
         controller.navigate(to: .childOne, style: .sheet)
         controller.navigate(to: .childTwo)
 
-        #expect(parent.presentation?.controller.root == .child(.childOne))
-        #expect(parent.presentation?.controller.path == [.child(.childTwo)])
+        #expect(
+            parent.presentation?.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: true
+            )
+        )
+        #expect(parent.presentation?.controller.path == [.child(.childTwo)].asNavigationElements())
 
         controller.popToPullbackRoot()
 
@@ -259,7 +289,7 @@ struct PlainNavigationControllerDestinationTest {
 
         controller.popToPullbackRoot()
 
-        #expect(parent.path == [.two, .three])
+        #expect(parent.path == [.two, .three].asNavigationElements())
     }
     
     @Test
@@ -273,7 +303,98 @@ struct PlainNavigationControllerDestinationTest {
         
         controller.navigate(to: .childOne, allowsSameScreenNesting: false)
         
-        #expect(parent.path == [.one, .child(.childOne)])
+        #expect(parent.path == [.one, .child(.childOne)].asNavigationElements())
         #expect(parent.presentation == nil)
     }
+    
+    @Test
+    func pushingWithoutAnimationSetsElementFlag() {
+        let parent = RootNavigationController<Destination>()
+        
+        let controller = parent.pullback(on: \.child)
+        controller.navigate(to: .childOne, animated: true)
+        controller.navigate(to: .childTwo, animated: false)
+        controller.navigate(to: .childThree, animated: true)
+        
+        #expect(
+            parent.path == [
+                NavigationElement(wrapped: .child(.childOne), wasNavigatedWithAnimation: true),
+                NavigationElement(wrapped: .child(.childTwo), wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .child(.childThree), wasNavigatedWithAnimation: true),
+            ]
+        )
+    }
+    
+    @Test
+    func presentingSheetWithoutAnimationSetsElementFlag() {
+        let parent = RootNavigationController<Destination>()
+        let controller = parent.pullback(on: \.child)
+        controller.navigate(to: .childOne, style: .sheet, animated: false)
+        controller.navigate(to: .childTwo, animated: false)
+        controller.navigate(to: .childThree, animated: true)
+        
+        #expect(
+            parent.presentation?.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            parent.presentation?.controller.path == [
+                NavigationElement(wrapped: .child(.childTwo), wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .child(.childThree), wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    
+    #if !os(watchOS)
+    @Test
+    func presentingPopoverWithoutAnimationSetsElementFlag() {
+        let parent = RootNavigationController<Destination>()
+        let controller = parent.pullback(on: \.child)
+        controller.navigate(to: .childOne, style: .popover, animated: false)
+        controller.navigate(to: .childTwo, animated: false)
+        controller.navigate(to: .childThree, animated: true)
+        
+        #expect(
+            parent.presentation?.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            parent.presentation?.controller.path == [
+                NavigationElement(wrapped: .child(.childTwo), wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .child(.childThree), wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    #endif
+    
+    #if !os(macOS)
+    @Test
+    func presentingCoverWithoutAnimationSetsElementFlag() {
+        let parent = RootNavigationController<Destination>()
+        let controller = parent.pullback(on: \.child)
+        controller.navigate(to: .childOne, style: .cover, animated: false)
+        controller.navigate(to: .childTwo, animated: false)
+        controller.navigate(to: .childThree, animated: true)
+        
+        #expect(
+            parent.presentation?.controller.root == NavigationElement(
+                wrapped: .child(.childOne),
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            parent.presentation?.controller.path == [
+                NavigationElement(wrapped: .child(.childTwo), wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .child(.childThree), wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    #endif
 }

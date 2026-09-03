@@ -27,23 +27,23 @@ import SwiftUI
 /// ```
 @Observable
 public class RootNavigationController<Screen: Hashable>: Identifiable {
-    public private(set) var root: Screen?
-    public var path: [Screen]
+    public private(set) var root: NavigationElement<Screen>?
+    public var path: [NavigationElement<Screen>]
     public internal(set) var presentation: Presentation<Screen>?
 
-    /// Creates a new navigation controller.
-    /// - Parameters:
-    ///   - root: The initial screen to display.
-    ///   - path: The initial stack of pushed screens.
-    public init(
+    init(
         root: Screen? = nil,
-        path: [Screen] = []
+        path: [Screen] = [],
+        rootSetWithAnimation: Bool
     ) {
-        self.root = root
-        self.path = path
+        if let root {
+            self.root = NavigationElement(wrapped: root, wasNavigatedWithAnimation: rootSetWithAnimation)
+        }
+        
+        self.path = path.map { NavigationElement(wrapped: $0, wasNavigatedWithAnimation: true) }
     }
 
-    var completePath: [Screen] {
+    var completePath: [NavigationElement<Screen>] {
         path + (presentation?.controller.completePath ?? [])
     }
 
@@ -60,7 +60,7 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
     /// - Note: This can only be called once, typically if the controller was initialized without a root.
     public func set(root screen: Screen) {
         precondition(self.root == nil)
-        self.root = screen
+        self.root = NavigationElement(wrapped: screen, wasNavigatedWithAnimation: false)
     }
 }
 
@@ -70,9 +70,14 @@ public extension RootNavigationController {
     func remove(
         index: Array<Screen>.Index,
         from controller: RootNavigationController,
-        animated: Bool,
         completion: @escaping () -> Void
     ) {
+        guard controller.path.indices.contains(index) else {
+            return
+        }
+        
+        let animated = controller.path[index].wasNavigatedWithAnimation
+        
         Transaction.conditionalyDisableAnimations(animated: animated) {
             controller.presentation = nil
             controller.path.removeSubrange(index...)
@@ -84,12 +89,21 @@ public extension RootNavigationController {
     func removeAfter(
         index: Array<Screen>.Index,
         from controller: RootNavigationController,
-        animated: Bool,
         completion: @escaping () -> Void
     ) {
+        let poppedElementIndex = controller.path.index(after: index)
+        
+        let animated: Bool
+        
+        if index == controller.path.indices.last {
+            animated = controller.presentation?.controller.root?.wasNavigatedWithAnimation ?? false
+        } else {
+            animated = controller.path[poppedElementIndex].wasNavigatedWithAnimation
+        }
+        
         Transaction.conditionalyDisableAnimations(animated: animated) {
             controller.presentation = nil
-            controller.path.removeSubrange(controller.path.index(after: index)...)
+            controller.path.removeSubrange(poppedElementIndex...)
         } completion: {
             completion()
         }
@@ -97,9 +111,11 @@ public extension RootNavigationController {
 
     func dismiss(
         from controller: RootNavigationController,
-        animated: Bool,
         completion: @escaping () -> Void
     ) {
+        guard let presentation = controller.presentation else { return }
+        let animated = presentation.controller.root?.wasNavigatedWithAnimation ?? true
+        
         Transaction.conditionalyDisableAnimations(animated: animated) {
             controller.presentation = nil
         } completion: {
@@ -109,9 +125,14 @@ public extension RootNavigationController {
 
     func dismiss(
         to controller: RootNavigationController,
-        animated: Bool,
         completion: @escaping () -> Void
     ) {
+        guard let presentation = controller.presentation else {
+            return
+        }
+        
+        let animated = presentation.controller.root?.wasNavigatedWithAnimation ?? true
+        
         Transaction.conditionalyDisableAnimations(animated: animated) {
             controller.presentation = nil
             controller.path.removeAll()
@@ -126,7 +147,7 @@ public extension RootNavigationController {
         completion: @escaping () -> Void
     ) {
         Transaction.conditionalyDisableAnimations(animated: animated) {
-            topMostController.path.append(screen)
+            topMostController.path.append(NavigationElement(wrapped: screen, wasNavigatedWithAnimation: animated))
         } completion: {
             completion()
         }
@@ -150,6 +171,7 @@ public extension RootNavigationController {
         } else {
             let controller = PresentedNavigationController(
                 root: screen,
+                animated: animated,
                 allowsInteractiveDismiss: dismissable
             )
 
@@ -176,14 +198,32 @@ public extension RootNavigationController {
         of element: Element,
         equals: (Screen, Element) -> Bool
     ) -> ElementLocationResult? {
-        if let index = path.firstIndex(where: { equals($0, element) }) {
+        if let index = path.firstIndex(where: { equals($0.wrapped, element) }) {
             return .index(controller: self, index: index)
         }
 
-        if let presentation, let root = presentation.controller.root, equals(root, element) {
+        if let presentation, let root = presentation.controller.root, equals(root.wrapped, element) {
             return .root(parentController: self)
         }
 
         return presentation?.controller.location(of: element, equals: equals)
     }
+}
+
+public extension RootNavigationController {
+    /// Creates a new navigation controller.
+    /// - Parameters:
+    ///   - root: The initial screen to display.
+    ///   - path: The initial stack of pushed screens.
+    convenience init(
+        root: Screen? = nil,
+        path: [Screen] = []
+    ) {
+        self.init(root: root, path: path, rootSetWithAnimation: true)
+    }
+}
+
+public struct NavigationElement<Wrapped: Hashable>: Hashable {
+    let wrapped: Wrapped
+    let wasNavigatedWithAnimation: Bool
 }

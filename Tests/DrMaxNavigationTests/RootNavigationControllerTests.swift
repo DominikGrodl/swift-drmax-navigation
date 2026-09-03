@@ -10,7 +10,7 @@ struct PlainDestinationTests {
         controller.set(root: .one)
         controller.navigate(to: .two)
 
-        #expect(controller.completePath == [.two])
+        #expect(controller.completePath == [.two].asNavigationElements())
     }
 
     @Test
@@ -22,7 +22,7 @@ struct PlainDestinationTests {
         controller.navigate(to: .three, style: .sheet)
         controller.navigate(to: .four)
 
-        #expect(controller.completePath == [.two, .three, .four])
+        #expect(controller.completePath == [.two, .three, .four].asNavigationElements())
     }
 
     @Test
@@ -30,7 +30,12 @@ struct PlainDestinationTests {
         let controller = RootNavigationController<Destination>()
         #expect(controller.root == nil)
         controller.set(root: .two)
-        #expect(controller.root == .two)
+        #expect(
+            controller.root == NavigationElement(
+                wrapped: .two,
+                wasNavigatedWithAnimation: false
+            )
+        )
     }
 
     @Test
@@ -46,10 +51,10 @@ struct PlainDestinationTests {
         controller.navigate(to: .four)
         controller.navigate(to: .three)
 
-        #expect(controller.path == [.one, .two])
+        #expect(controller.path == [.one, .two].asNavigationElements())
         #expect(controller.presentation != nil)
         #expect(controller.presentation!.controller.path.isEmpty)
-        #expect(controller.presentation!.controller.presentation!.controller.path == [.four, .three])
+        #expect(controller.presentation!.controller.presentation!.controller.path == [.four, .three].asNavigationElements())
     }
 
     @Test
@@ -65,14 +70,14 @@ struct PlainDestinationTests {
         controller.navigate(to: .four)
         controller.navigate(to: .three)
 
-        #expect(controller.path == [.one, .two])
+        #expect(controller.path == [.one, .two].asNavigationElements())
         #expect(controller.presentation != nil)
         #expect(controller.presentation!.controller.path.isEmpty)
-        #expect(controller.presentation!.controller.presentation!.controller.path == [.four, .three])
+        #expect(controller.presentation!.controller.presentation!.controller.path == [.four, .three].asNavigationElements())
 
         controller.pop()
 
-        #expect(controller.presentation!.controller.presentation!.controller.path == [.four])
+        #expect(controller.presentation!.controller.presentation!.controller.path == [.four].asNavigationElements())
 
         controller.pop()
 
@@ -82,7 +87,7 @@ struct PlainDestinationTests {
         controller.pop()
 
         #expect(controller.presentation!.controller.presentation == nil)
-        #expect(controller.path == [.one, .two])
+        #expect(controller.path == [.one, .two].asNavigationElements())
         #expect(controller.presentation != nil)
         #expect(controller.presentation!.controller.path.isEmpty)
     }
@@ -139,8 +144,13 @@ struct PlainDestinationTests {
 
         controller.pop()
 
-        #expect(controller.root == .one)
-        #expect(controller.path == [.two])
+        #expect(
+            controller.root == NavigationElement(
+                wrapped: .one,
+                wasNavigatedWithAnimation: true
+            )
+        )
+        #expect(controller.path == [.two].asNavigationElements())
     }
 
     @Test
@@ -159,8 +169,13 @@ struct PlainDestinationTests {
 
         controller.pop()
 
-        #expect(controller.root == .one)
-        #expect(controller.path == [.two, .three])
+        #expect(
+            controller.root == NavigationElement(
+                wrapped: .one,
+                wasNavigatedWithAnimation: true
+            )
+        )
+        #expect(controller.path == [.two, .three].asNavigationElements())
         #expect(controller.presentation == nil)
     }
 
@@ -188,7 +203,7 @@ struct PlainDestinationTests {
 
         controller.popBefore(.three)
 
-        #expect(controller.path == [.two])
+        #expect(controller.path == [.two].asNavigationElements())
     }
 
     @Test
@@ -202,7 +217,7 @@ struct PlainDestinationTests {
 
         controller.popBefore(.four)
 
-        #expect(controller.path == [.two, .three])
+        #expect(controller.path == [.two, .three].asNavigationElements())
         #expect(controller.presentation == nil)
     }
 
@@ -231,7 +246,7 @@ struct PlainDestinationTests {
 
         controller.popBefore(.three)
 
-        #expect(controller.path == [.two])
+        #expect(controller.path == [.two].asNavigationElements())
         #expect(controller.presentation == nil)
     }
 
@@ -244,7 +259,7 @@ struct PlainDestinationTests {
 
         controller.popTo(.three)
 
-        #expect(controller.path == [.two, .three])
+        #expect(controller.path == [.two, .three].asNavigationElements())
     }
 
     @Test
@@ -256,7 +271,7 @@ struct PlainDestinationTests {
 
         controller.popTo(.two)
 
-        #expect(controller.path == [.two])
+        #expect(controller.path == [.two].asNavigationElements())
     }
 
     @Test
@@ -272,7 +287,7 @@ struct PlainDestinationTests {
 
         controller.popTo(.three)
 
-        #expect(controller.path == [.two, .three])
+        #expect(controller.path == [.two, .three].asNavigationElements())
         #expect(controller.presentation == nil)
     }
 
@@ -284,16 +299,112 @@ struct PlainDestinationTests {
         controller.navigate(to: .three)
         controller.navigate(to: .four)
 
-        #expect(controller.path == [.one])
-        #expect(controller.presentation?.controller.root == .two)
-        #expect(controller.presentation?.controller.path == [.three, .four])
+        #expect(controller.path == [.one].asNavigationElements())
+        #expect(
+            controller.presentation?.controller.root == NavigationElement(
+                wrapped: .two,
+                wasNavigatedWithAnimation: true
+            )
+        )
+        #expect(controller.presentation?.controller.path == [.three, .four].asNavigationElements())
 
         controller.popToPresentationRoot()
 
-        #expect(controller.path == [.one])
-        #expect(controller.presentation?.controller.root == .two)
+        #expect(controller.path == [.one].asNavigationElements())
+        #expect(
+            controller.presentation?.controller.root == NavigationElement(
+                wrapped: .two,
+                wasNavigatedWithAnimation: true
+            )
+        )
         #expect(controller.presentation!.controller.path.isEmpty)
     }
+    
+    @Test
+    func pushingWithoutAnimationSetsElementFlag() {
+        let controller = RootNavigationController<Destination>()
+        controller.navigate(to: .one, animated: true)
+        controller.navigate(to: .two, animated: false)
+        controller.navigate(to: .three, animated: true)
+        
+        #expect(
+            controller.path == [
+                NavigationElement(wrapped: .one, wasNavigatedWithAnimation: true),
+                NavigationElement(wrapped: .two, wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .three, wasNavigatedWithAnimation: true),
+            ]
+        )
+    }
+    
+    @Test
+    func presentingSheetWithoutAnimationSetsElementFlag() {
+        let controller = RootNavigationController<Destination>()
+        controller.navigate(to: .one, style: .sheet, animated: false)
+        controller.navigate(to: .two, animated: false)
+        controller.navigate(to: .three, animated: true)
+        
+        #expect(
+            controller.presentation?.controller.root == NavigationElement(
+                wrapped: .one,
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            controller.presentation?.controller.path == [
+                NavigationElement(wrapped: .two, wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .three, wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    
+    #if !os(watchOS)
+    @Test
+    func presentingPopoverWithoutAnimationSetsElementFlag() {
+        let controller = RootNavigationController<Destination>()
+        controller.navigate(to: .one, style: .popover, animated: false)
+        controller.navigate(to: .two, animated: false)
+        controller.navigate(to: .three, animated: true)
+        
+        #expect(
+            controller.presentation?.controller.root == NavigationElement(
+                wrapped: .one,
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            controller.presentation?.controller.path == [
+                NavigationElement(wrapped: .two, wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .three, wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    #endif
+    
+    #if !os(macOS)
+    @Test
+    func presentingCoverWithoutAnimationSetsElementFlag() {
+        let controller = RootNavigationController<Destination>()
+        controller.navigate(to: .one, style: .cover, animated: false)
+        controller.navigate(to: .two, animated: false)
+        controller.navigate(to: .three, animated: true)
+        
+        #expect(
+            controller.presentation?.controller.root == NavigationElement(
+                wrapped: .one,
+                wasNavigatedWithAnimation: false
+            )
+        )
+        
+        #expect(
+            controller.presentation?.controller.path == [
+                NavigationElement(wrapped: .two, wasNavigatedWithAnimation: false),
+                NavigationElement(wrapped: .three, wasNavigatedWithAnimation: true)
+            ]
+        )
+    }
+    #endif
 }
 
 @Suite("CasePathable Destination conforming tests")
@@ -307,7 +418,9 @@ struct CasePathableDestinationTests {
 
         controller.popBefore(\.three)
 
-        #expect(controller.path == [.two])
+        #expect(
+            controller.path == [.two].asNavigationElements()
+        )
     }
 
     @Test
@@ -335,7 +448,7 @@ struct CasePathableDestinationTests {
 
         controller.popBefore(\.three)
 
-        #expect(controller.path == [.two])
+        #expect(controller.path == [.two].asNavigationElements())
         #expect(controller.presentation == nil)
     }
 
@@ -348,7 +461,7 @@ struct CasePathableDestinationTests {
 
         controller.popTo(\.three)
 
-        #expect(controller.path == [.two, .three])
+        #expect(controller.path == [.two, .three].asNavigationElements())
     }
 
     @Test
@@ -360,7 +473,7 @@ struct CasePathableDestinationTests {
 
         controller.popTo(\.two)
 
-        #expect(controller.path == [.two])
+        #expect(controller.path == [.two].asNavigationElements())
     }
 
     @Test
@@ -376,7 +489,7 @@ struct CasePathableDestinationTests {
 
         controller.popTo(\.three)
 
-        #expect(controller.path == [.two, .three])
+        #expect(controller.path == [.two, .three].asNavigationElements())
         #expect(controller.presentation == nil)
     }
     
@@ -389,7 +502,7 @@ struct CasePathableDestinationTests {
         
         controller.navigate(to: .two, allowsSameScreenNesting: false)
         
-        #expect(controller.path == [.one, .two])
+        #expect(controller.path == [.one, .two].asNavigationElements())
         #expect(controller.presentation == nil)
     }
 }

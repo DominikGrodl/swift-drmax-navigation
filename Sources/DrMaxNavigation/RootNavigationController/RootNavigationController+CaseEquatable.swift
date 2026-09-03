@@ -6,8 +6,8 @@ extension RootNavigationController where Screen: CaseEquatable {
         allowsSameScreenNesting: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
-        if !allowsSameScreenNesting, let first = completePath.first(where: screen.equals) {
-            popBefore(first, animated: animated)
+        if !allowsSameScreenNesting, let first = completePath.first(where: { $0.wrapped.equals(screen) }) {
+            popBefore(first.wrapped)
         }
         
         navigate(

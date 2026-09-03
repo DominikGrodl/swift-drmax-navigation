@@ -20,7 +20,6 @@ extension RootNavigationController where Screen: CasePathable {
     ///   - completion: A closure to execute after the transition finishes.
     public func popBefore(
         _ element: PartialCaseKeyPath<Screen>,
-        animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
         switch location(
@@ -31,12 +30,10 @@ extension RootNavigationController where Screen: CasePathable {
         case let .index(controller, index): remove(
             index: index,
             from: controller,
-            animated: animated,
             completion: completion
         )
         case let .root(controller): dismiss(
             from: controller,
-            animated: animated,
             completion: completion
         )
         case nil: break
@@ -50,23 +47,19 @@ extension RootNavigationController where Screen: CasePathable {
     ///   - completion: A closure to execute after the transition finishes.
     public func popTo(
         _ element: PartialCaseKeyPath<Screen>,
-        animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
         switch location(
             of: element,
-            equals: { $0.is($1)
-            }
+            equals: { $0.is($1) }
         ) {
         case let .index(controller, index): removeAfter(
             index: index,
             from: controller,
-            animated: animated,
             completion: completion
         )
         case let .root(controller): dismiss(
             to: controller,
-            animated: animated,
             completion: completion
         )
         case nil: break
