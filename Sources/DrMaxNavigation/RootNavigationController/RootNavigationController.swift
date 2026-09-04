@@ -224,6 +224,6 @@ public extension RootNavigationController {
 }
 
 public struct NavigationElement<Wrapped: Hashable>: Hashable {
-    let wrapped: Wrapped
-    let wasNavigatedWithAnimation: Bool
+    public let wrapped: Wrapped
+    public let wasNavigatedWithAnimation: Bool
 }
