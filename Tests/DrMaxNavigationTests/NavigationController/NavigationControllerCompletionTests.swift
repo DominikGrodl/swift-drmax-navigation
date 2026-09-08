@@ -3,231 +3,206 @@ import Testing
 
 struct NavigationControllerCompletionTests {
     @Test
-    func completionInvokedWhenPushing() async {
+    func invokedWhenPushing() async {
         let controller = controller()
         
-        var completionCalled = false
-        
-        controller.navigate(to: .childOne, style: .push) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.navigate(to: .childOne, style: .push) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingBeforeExistingElement() async {
+    func invokedWhenPoppingBeforeExistingElement() async {
         let controller = controller()
         controller.navigate(to: .childOne)
         
-        var completionCalled = false
-        
-        controller.popBefore(\.childOne) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popBefore(\.childOne) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingBeforeNonExistingElement() async {
+    func invokedWhenPoppingBeforeNonExistingElement() async {
         let controller = controller()
         controller.navigate(to: .childOne)
         
-        var completionCalled = false
-        
-        controller.popBefore(\.childTwo) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popBefore(\.childTwo) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingToOnlyElement() async {
+    func invokedWhenPoppingToOnlyElement() async {
         let controller = controller()
         controller.navigate(to: .childOne)
         
-        var completionCalled = false
-        
-        controller.popTo(\.childOne) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popTo(\.childOne) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingBeforePresentedElement() async {
+    func invokedWhenPoppingBeforePresentedElement() async {
         let controller = controller()
         controller.navigate(to: .childOne, style: .sheet)
         
-        var completionCalled = false
-        
-        controller.popBefore(\.childOne) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popBefore(\.childOne) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingToPresentedElement() async {
+    func invokedWhenPoppingToPresentedElement() async {
         let controller = controller()
         controller.navigate(to: .childOne, style: .sheet)
         
-        var completionCalled = false
-        
-        controller.popTo(\.childOne) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popTo(\.childOne) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingToFirstElement() async {
+    func invokedWhenPoppingToFirstElement() async {
         let controller = controller()
         controller.navigate(to: .childOne)
         controller.navigate(to: .childTwo)
         
-        var completionCalled = false
-        
-        controller.popTo(\.childOne) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popTo(\.childOne) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingToNonExistingElement() async {
+    func invokedWhenPoppingToNonExistingElement() async {
         let controller = controller()
         controller.navigate(to: .childOne)
         
-        var completionCalled = false
-        
-        controller.popTo(\.childTwo) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popTo(\.childTwo) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingEmptyPath() async {
+    func invokedWhenPoppingEmptyPath() async {
         let controller = controller()
-        var completionCalled = false
         
-        controller.pop {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.pop {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingNonEmptyPath() async {
+    func invokedWhenPoppingNonEmptyPath() async {
         let controller = controller()
         controller.navigate(to: .childOne, style: .push)
         controller.navigate(to: .childTwo, style: .push)
-        var completionCalled = false
         
-        controller.pop {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.pop {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingToRootEmptyPath() async {
+    func invokedWhenPoppingToRootEmptyPath() async {
         let controller = controller()
-        var completionCalled = false
         
-        controller.popToRoot {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popToRoot {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingToRootNonEmptyPath() async {
+    func invokedWhenPoppingToRootNonEmptyPath() async {
         let controller = controller()
         controller.navigate(to: .childOne, style: .push)
         controller.navigate(to: .childTwo, style: .push)
-        var completionCalled = false
         
-        controller.popToRoot {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popToRoot {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingToPresentationRootWithPresentation() async {
+    func invokedWhenPoppingToPresentationRootWithPresentation() async {
         let controller = controller()
         controller.navigate(to: .childOne, style: .sheet)
-        var completionCalled = false
         
-        controller.popToPresentationRoot {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popToPresentationRoot {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPoppingToPresentationRootWithoutPresentation() async {
+    func invokedWhenPoppingToPresentationRootWithoutPresentation() async {
         let controller = controller()
-        var completionCalled = false
         
-        controller.popToPresentationRoot {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.popToPresentationRoot {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     @Test
-    func completionInvokedWhenPresentingSheet() async {
+    func invokedWhenPresentingSheet() async {
         let controller = controller()
-        var completionCalled = false
         
-        controller.navigate(to: .childOne, style: .sheet) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.navigate(to: .childOne, style: .sheet) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     
     #if !os(macOS)
     @Test
-    func completionInvokedWhenPresentingCover() async {
+    func invokedWhenPresentingCover() async {
         let controller = controller()
-        var completionCalled = false
         
-        controller.navigate(to: .childOne, style: .cover) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.navigate(to: .childOne, style: .cover) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     #endif
     
     #if !os(watchOS)
     @Test
-    func completionInvokedWhenPresentingPopover() async {
+    func invokedWhenPresentingPopover() async {
         let controller = controller()
-        var completionCalled = false
         
-        controller.navigate(to: .childOne, style: .popover) {
-            completionCalled = true
+        await confirm { confirmation in
+            controller.navigate(to: .childOne, style: .popover) {
+                confirmation()
+            }
         }
-        
-        await wait(.seconds(1), for: completionCalled)
     }
     #endif
     

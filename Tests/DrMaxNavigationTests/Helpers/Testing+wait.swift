@@ -1,34 +1,34 @@
 import Testing
 
-func wait(
-    _ timeout: Duration,
-    _ comment: Comment? = nil,
-    expectedCount: Int = 1,
+func confirm(
+    timeout: Duration = .seconds(1),
+    comment: Comment? = nil,
     fileID: String = #fileID,
     filePath: String = #filePath,
     line: Int = #line,
     column: Int = #column,
-    for expectation: @escaping @autoclosure () -> Bool
+    _ operation: (@escaping () -> Void) -> Void
 ) async {
-    let startTime = ContinuousClock.now
-    var fulfilled = false
-    
     await confirmation(
         comment,
-        expectedCount: expectedCount,
-        sourceLocation: SourceLocation(fileID: fileID, filePath: filePath, line: line, column: column)
+        sourceLocation: SourceLocation(
+            fileID: fileID,
+            filePath: filePath,
+            line: line,
+            column: column
+        )
     ) { confirm in
-        while !fulfilled && ContinuousClock.now - startTime < timeout {
-            if expectation() {
-                fulfilled = true
-                confirm()
-                break
-            }
-            await Task.yield()
+        var fulfilled = false
+        
+        operation {
+            fulfilled = true
+            confirm()
         }
         
-        if !fulfilled {
-            Issue.record("Timeout")
+        let startTime = ContinuousClock.now
+        
+        while !fulfilled && ContinuousClock.now - startTime < timeout {
+            await Task.yield()
         }
     }
 }
