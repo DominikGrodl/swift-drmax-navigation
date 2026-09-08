@@ -24,10 +24,9 @@ extension RootNavigationController where Screen: CasePathable {
     ) {
         switch location(
             of: element,
-            equals: { $0.is($1)
-            }
+            equals: { $0.is($1) }
         ) {
-        case let .index(controller, index): remove(
+        case let .index(controller, index): removeFrom(
             index: index,
             from: controller,
             completion: completion
@@ -36,7 +35,7 @@ extension RootNavigationController where Screen: CasePathable {
             from: controller,
             completion: completion
         )
-        case nil: break
+        case nil: completion()
         }
     }
 
@@ -62,7 +61,7 @@ extension RootNavigationController where Screen: CasePathable {
             to: controller,
             completion: completion
         )
-        case nil: break
+        case nil: completion()
         }
     }
 }

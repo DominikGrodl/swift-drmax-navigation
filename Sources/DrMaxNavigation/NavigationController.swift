@@ -124,6 +124,8 @@ public extension NavigationController where Child: CasePathable, Parent: CasePat
                 casePath(screen),
                 completion: completion
             )
+        } else {
+            completion()
         }
     }
 
@@ -141,6 +143,8 @@ public extension NavigationController where Child: CasePathable, Parent: CasePat
                 casePath(screen),
                 completion: completion
             )
+        } else {
+            completion()
         }
     }
 }

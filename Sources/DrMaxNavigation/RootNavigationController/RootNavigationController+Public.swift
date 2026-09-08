@@ -84,14 +84,22 @@ public extension RootNavigationController {
         if let presentation {
             if presentation.controller.path.isEmpty && presentation.controller.presentation == nil {
                 self.presentation = nil
+                completion()
             } else {
                 presentation.controller.pop(completion: completion)
             }
         } else {
-            guard let animated = path.last?.wasNavigatedWithAnimation else { return }
+            guard let animated = path.last?.wasNavigatedWithAnimation else {
+                completion()
+                return
+            }
             
             Transaction.conditionalyDisableAnimations(animated: animated) {
-                guard !path.isEmpty else { return }
+                guard !path.isEmpty else {
+                    completion()
+                    return
+                }
+                
                 path.removeLast()
             } completion: {
                 completion()
@@ -112,7 +120,7 @@ public extension RootNavigationController {
             of: element,
             equals: { $0 == $1 }
         ) {
-        case let .index(controller, index): remove(
+        case let .index(controller, index): removeFrom(
             index: index,
             from: controller,
             completion: completion
@@ -121,7 +129,7 @@ public extension RootNavigationController {
             from: parentController,
             completion: completion
         )
-        case nil: break
+        case nil: completion()
         }
     }
 
@@ -147,7 +155,7 @@ public extension RootNavigationController {
             to: parentController,
             completion: completion
         )
-        case nil: break
+        case nil: completion()
         }
     }
 

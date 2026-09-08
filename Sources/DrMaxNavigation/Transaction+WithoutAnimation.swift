@@ -41,7 +41,9 @@ extension Transaction {
                 completion()
             }
         } else {
-            return try withoutAnimation(body: body)
+            let result = try withoutAnimation(body: body)
+            completion()
+            return result
         }
     }
 }
