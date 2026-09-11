@@ -16,10 +16,20 @@ extension Transaction {
     /// Executes a body of code without animations.
     /// - Parameter body: The code to execute.
     /// - Returns: The result of the body.
-    public static func withoutAnimation<Result>(body: () throws -> Result) rethrows -> Result {
-        var transaction = Transaction()
-        transaction.disablesAnimations = true
-        return try withTransaction(transaction, body)
+    public static func withoutAnimation<Result>(
+        body: () throws -> Result,
+        completion: @escaping () -> Void
+    ) rethrows -> Result {
+        do {
+            var transaction = Transaction()
+            transaction.disablesAnimations = true
+            let result = try withTransaction(transaction, body)
+            completion()
+            return result
+        } catch {
+            completion()
+            throw error
+        }
     }
 
     /// Conditionally executes a body of code with or without animations.
@@ -41,9 +51,10 @@ extension Transaction {
                 completion()
             }
         } else {
-            let result = try withoutAnimation(body: body)
-            completion()
-            return result
+            return try withoutAnimation(
+                body: body,
+                completion: completion
+            )
         }
     }
 }

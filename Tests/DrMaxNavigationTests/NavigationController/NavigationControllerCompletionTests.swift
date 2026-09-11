@@ -180,6 +180,29 @@ struct NavigationControllerCompletionTests {
         }
     }
     
+    @Test
+    func invokedWhenPoppingToPullbackRootNonExistingElement() async {
+        let controller = controller()
+        
+        await confirm { confirmation in
+            controller.popToPullbackRoot {
+                confirmation()
+            }
+        }
+    }
+    
+    @Test
+    func invokedWhenPoppingToPullbackRootExistingElement() async {
+        let controller = controller()
+        controller.navigate(to: .childOne)
+        
+        await confirm { confirmation in
+            controller.popToPullbackRoot {
+                confirmation()
+            }
+        }
+    }
+    
     #if !os(macOS)
     @Test
     func invokedWhenPresentingCover() async {

@@ -83,8 +83,13 @@ public extension RootNavigationController {
     ) {
         if let presentation {
             if presentation.controller.path.isEmpty && presentation.controller.presentation == nil {
-                self.presentation = nil
-                completion()
+                let animated = presentation.controller.root?.wasNavigatedWithAnimation ?? true
+                
+                Transaction.conditionalyDisableAnimations(animated: animated) {
+                    self.presentation = nil
+                } completion: {
+                    completion()
+                }
             } else {
                 presentation.controller.pop(completion: completion)
             }
@@ -95,11 +100,6 @@ public extension RootNavigationController {
             }
             
             Transaction.conditionalyDisableAnimations(animated: animated) {
-                guard !path.isEmpty else {
-                    completion()
-                    return
-                }
-                
                 path.removeLast()
             } completion: {
                 completion()
@@ -110,7 +110,6 @@ public extension RootNavigationController {
     /// Pops screens until the specified element is at the top, then removes it too.
     /// - Parameters:
     ///   - element: The element to pop before.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func popBefore(
         _ element: Screen,
@@ -136,7 +135,6 @@ public extension RootNavigationController {
     /// Pops screens until the specified element is at the top.
     /// - Parameters:
     ///   - element: The destination element.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func popTo(
         _ element: Screen,

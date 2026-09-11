@@ -301,10 +301,10 @@ struct PlainNavigationControllerDestinationTest {
         
         let controller = parent.pullback(on: \.child)
         
-        controller.navigate(to: .childOne, allowsSameScreenNesting: false)
-        
-        #expect(parent.path == [.one, .child(.childOne)].asNavigationElements())
-        #expect(parent.presentation == nil)
+        controller.navigate(to: .childOne, allowsSameScreenNesting: false) {
+            #expect(parent.path == [.one, .child(.childOne)].asNavigationElements())
+            #expect(parent.presentation == nil)
+        }
     }
     
     @Test

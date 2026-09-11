@@ -104,9 +104,16 @@ public extension NavigationController {
 public extension NavigationController where Child: CasePathable, Parent: CasePathable {
     /// Pops all screens until the screen that triggered this pullback is at the top, then removes it too.
     /// - Parameter animated: Whether to animate the transition. Defaults to `true`.
-    func popToPullbackRoot() {
+    func popToPullbackRoot(
+        completion: @escaping () -> Void = {}
+    ) {
         if let screen = parent.completePath.compactMap({ $0.wrapped[case: casePath] }).first {
-            parent.popBefore(casePath(screen))
+            parent.popBefore(
+                casePath(screen),
+                completion: completion
+            )
+        } else {
+            completion()
         }
     }
 

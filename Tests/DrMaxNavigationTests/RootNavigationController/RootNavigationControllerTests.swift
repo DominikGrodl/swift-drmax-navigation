@@ -500,9 +500,9 @@ struct CasePathableDestinationTests {
             path: [.one, .two, .three, .two]
         )
         
-        controller.navigate(to: .two, allowsSameScreenNesting: false)
-        
-        #expect(controller.path == [.one, .two].asNavigationElements())
-        #expect(controller.presentation == nil)
+        controller.navigate(to: .two, allowsSameScreenNesting: false) {
+            #expect(controller.path == [.one, .two].asNavigationElements())
+            #expect(controller.presentation == nil)
+        }
     }
 }
