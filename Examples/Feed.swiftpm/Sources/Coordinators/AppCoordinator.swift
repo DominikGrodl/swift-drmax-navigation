@@ -4,6 +4,10 @@ import CasePaths
 
 @Observable
 final class AppCoordinator {
+    /*
+     You generally hold into the RootNavigationController as close to the app root as possible. After creating a RootNavigationController, you never create it elsewhere, all other navigation happens through scoped
+     NavigationController(s).
+    */
     let feedController: RootNavigationController<FeedCoordinatorDestination>
     let settingsController: RootNavigationController<SettingsDestination>
     
@@ -42,6 +46,11 @@ private extension AppCoordinator {
             navigateToLogin(
                 on: feedController,
                 loginDestination: \.login,
+                /*
+                 Presenting to a sheet presents the destination and internally wraps it in its own navigation mechanism.
+                 That way you don't have to manage stacks for presented destinations and can freely push other destinations.
+                 The library will always find the top most presentation and add new destinations to its stack.
+                */
                 style: .sheet
             )
         }
