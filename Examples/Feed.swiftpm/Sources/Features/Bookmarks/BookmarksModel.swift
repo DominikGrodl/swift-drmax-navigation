@@ -4,10 +4,20 @@ import Observation
 final class BookmarksModel: HashableObject {
     let store: BookmarksStore
     
-    weak var delegate: BookmarksModelDelegate?
+    enum DelegateAction {
+        case navigateToSource(name: String)
+        case navigateToArticle(Article)
+        case navigateToLogin
+    }
+    
+    var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
     init(store: BookmarksStore) {
         self.store = store
+    }
+    
+    func loginButtonTapped() {
+        delegate(.navigateToLogin)
     }
     
     func bookmark(article: Article) {
@@ -19,15 +29,10 @@ final class BookmarksModel: HashableObject {
     }
     
     func sourceTapped(name: String) {
-        delegate?.bookmarksModel(self, shouldNavigateToSourceDetail: name)
+        delegate(.navigateToSource(name: name))
     }
     
     func articleTapped(_ article: Article) {
-        delegate?.bookmarksModel(self, shouldNavigateToArticleDetail: article)
+        delegate(.navigateToArticle(article))
     }
-}
-
-protocol BookmarksModelDelegate: AnyObject {
-    func bookmarksModel(_ model: BookmarksModel, shouldNavigateToSourceDetail name: String)
-    func bookmarksModel(_ model: BookmarksModel, shouldNavigateToArticleDetail article: Article)
 }

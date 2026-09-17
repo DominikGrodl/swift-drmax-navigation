@@ -2,46 +2,85 @@ import DrMaxNavigation
 import Observation
 import CasePaths
 
-@CasePathable
-enum AppDestination: Hashable, FeedDestinationProviding {
-    case feedCoordinator(FeedCoordinator<Self>)
-    case feed(FeedDestination)
-}
-
-@CasePathable
-enum BookmarksAppDestination: Hashable, BookmarksDestinationProviding {
-    case bookmarksCoordinator(BookmarksCoordinator<Self>)
-    case bookmarksDestination(BookmarksDestination)
-}
-
 @Observable
 final class AppCoordinator {
-    let controller: RootNavigationController<AppDestination>
-    let bookmarksController: RootNavigationController<BookmarksAppDestination>
+    let feedController: RootNavigationController<FeedCoordinatorDestination>
+    let settingsController: RootNavigationController<SettingsDestination>
     
     init(
         bookmarksStore: BookmarksStore
     ) {
-        let controller = RootNavigationController<AppDestination>()
+        let feedController = RootNavigationController<FeedCoordinatorDestination>()
         
         let feedCoordinator = FeedCoordinator(
-            controller: controller.pullback(on: \.feed),
+            controller: feedController.pullback(on: \.feed),
             bookmarksStore: bookmarksStore
         )
         
-        controller.set(root: .feedCoordinator(feedCoordinator))
+        feedController.set(root: .feedCoordinator(feedCoordinator))
         
-        self.controller = controller
+        self.feedController = feedController
         
-        let bookmarksController = RootNavigationController<BookmarksAppDestination>()
+        let settingsController = RootNavigationController<SettingsDestination>()
         
-        let bookmarksCoordinator = BookmarksCoordinator(
-            controller: bookmarksController.pullback(on: \.bookmarksDestination),
-            bookmarksStore: bookmarksStore
+        let settingsCoordinator = SettingsCoordinator(controller: settingsController.pullback(on: \.settingsDestination))
+        
+        settingsController.set(root: .settingsCoordinator(settingsCoordinator))
+        
+        self.settingsController = settingsController
+        
+        feedCoordinator.delegate = { [weak self] action in
+            self?.handleFeedCoordinatorDelegate(action: action)
+        }
+        
+        settingsCoordinator.delegate = { [weak self] action in
+            self?.handleSettingsCoordinatorDelegate(action: action)
+        }
+    }
+}
+
+// MARK: - Delegate
+private extension AppCoordinator {
+    func handleFeedCoordinatorDelegate(action: FeedCoordinator<FeedCoordinatorDestination>.DelegateAction) {
+        switch action {
+        case .navigateToLogin:
+            navigateToLogin(
+                on: feedController,
+                loginDestination: \.login,
+                style: .sheet
+            )
+        }
+    }
+    
+    func handleSettingsCoordinatorDelegate(action: SettingsCoordinator<SettingsDestination>.DelegateAction) {
+        switch action {
+        case .navigateToLogin:
+            navigateToLogin(
+                on: settingsController,
+                loginDestination: \.loginDestination,
+                style: .push
+            )
+        }
+    }
+}
+
+// MARK: - Navigation
+private extension AppCoordinator {
+    func navigateToLogin<Parent: LoginCoordinatorDestinationProviding>(
+        on controller: RootNavigationController<Parent>,
+        loginDestination: CaseKeyPath<Parent, LoginDestination>,
+        style: NavigationStyle
+    ) {
+        let coordinator = LoginCoordinator(controller: controller.pullback(on: loginDestination))
+        
+        coordinator.onDismiss = { [weak coordinator, weak controller] in
+            guard let coordinator, let controller else { return }
+            controller.popBefore(.loginCoordinator(coordinator))
+        }
+        
+        controller.navigate(
+            to: .loginCoordinator(coordinator),
+            style: style
         )
-        
-        bookmarksController.set(root: .bookmarksCoordinator(bookmarksCoordinator))
-        
-        self.bookmarksController = bookmarksController
     }
 }

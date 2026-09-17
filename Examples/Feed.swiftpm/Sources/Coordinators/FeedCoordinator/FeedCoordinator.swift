@@ -2,23 +2,18 @@ import DrMaxNavigation
 import Observation
 import CasePaths
 
-@CasePathable
-enum FeedDestination: Hashable {
-    case articleDetail(ArticleDetailModel)
-    case authorDetail(AuthorDetailModel)
-    case sourceDetail(SourceDetailModel)
-}
-
-protocol FeedDestinationProviding {
-    static func feed(_ destination: FeedDestination) -> Self
-}
-
 @Observable
 final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDestinationProviding>: HashableObject {
     let controller: NavigationController<ParentDestination, FeedDestination>
     let feedModel: FeedModel
     
     private let bookmarksStore: BookmarksStore
+    
+    enum DelegateAction {
+        case navigateToLogin
+    }
+    
+    var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
     init(
         controller: NavigationController<ParentDestination, FeedDestination>,
@@ -30,12 +25,18 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
         
         self.bookmarksStore = bookmarksStore
         
-        feedModel.delegate = self
+        feedModel.delegate = { [weak self] action in
+            self?.handleFeedModelDelegate(action: action)
+        }
     }
     
     private func navigateToSourceDetail(name: String) {
         let model = SourceDetailModel(sourceName: name, bookmarksStore: bookmarksStore)
-        model.delegate = self
+        
+        model.delegate = { [weak self] action in
+            self?.handleSourceDetailModelDelegate(action: action)
+        }
+        
         controller.navigate(to: .sourceDetail(model))
     }
     
@@ -45,14 +46,20 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
             bookmarksStore: bookmarksStore
         )
         
-        model.delegate = self
+        model.delegate = { [weak self] action in
+            self?.handleArticleDetailModelDelegate(action: action)
+        }
         
         controller.navigate(to: .articleDetail(model))
     }
     
     private func navigateToAuthorDetail(name: String) {
         let model = AuthorDetailModel(authorName: name, bookmarksStore: bookmarksStore)
-        model.delegate = self
+        
+        model.delegate = { [weak self, weak model] action in
+            self?.handleAuthorDetailModelDelegate(action: action, from: model)
+        }
+        
         controller.navigate(to: .authorDetail(model), style: .sheet)
     }
     
@@ -61,62 +68,55 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
     }
 }
 
-extension FeedCoordinator: ArticleDetailModelDelegate {
-    func articleDetailModel(_ model: ArticleDetailModel, shouldNavigateToAuthorDetail name: String) {
-        navigateToAuthorDetail(name: name)
+// MARK: - Delegate
+private extension FeedCoordinator {
+    func handleFeedModelDelegate(action: FeedModel.DelegateAction) {
+        switch action {
+        case .navigateToArticle(let article):
+            navigateToArticleDetail(article: article)
+        case .navigateToSource(let name):
+            navigateToSourceDetail(name: name)
+        case .navigateToAuthor(let name):
+            navigateToAuthorDetail(name: name)
+        case .navigateToLogin:
+            delegate(.navigateToLogin)
+        }
     }
     
-    func articleDetailModel(_ model: ArticleDetailModel, shouldNavigateToSourceDetail name: String) {
-        navigateToSourceDetail(name: name)
-    }
-}
-
-extension FeedCoordinator: AuthorDetailModelDelegate {
-    func articleCellModel(_ model: ArticleCellModel, shouldNavigateToSource name: String) {
-        navigateToSourceDetail(name: name)
-    }
-    
-    func articleCellModel(_ model: ArticleCellModel, shouldNavigateToArticle article: Article) {
-        navigateToArticleDetail(article: article)
-    }
-    
-    func authorDetailModelShouldDismiss(_ model: AuthorDetailModel) {
-        dismissAuthorDetail(model: model)
-    }
-    
-    func authorDetailModel(_ model: AuthorDetailModel, shouldNavigateToSourceDetail name: String) {
-        navigateToSourceDetail(name: name)
+    func handleAuthorDetailModelDelegate(
+        action: AuthorDetailModel.DelegateAction,
+        from model: AuthorDetailModel?
+    ) {
+        switch action {
+        case .navigateToArticle(let article):
+            navigateToArticleDetail(article: article)
+        case .navigateToAuthor(let name):
+            navigateToAuthorDetail(name: name)
+        case .navigateToSource(let name):
+            navigateToSourceDetail(name: name)
+        case .dismiss:
+            guard let model else { return }
+            dismissAuthorDetail(model: model)
+        }
     }
     
-    func authorDetailModel(_ model: AuthorDetailModel, shouldNavigateToArticleDetail article: Article) {
-        navigateToArticleDetail(article: article)
-    }
-}
-
-extension FeedCoordinator: FeedModelDelegate {
-    func feedModel(_ model: FeedModel, shouldNavigateToAuthorDetail name: String) {
-        navigateToAuthorDetail(name: name)
-    }
-    
-    func feedModel(_ model: FeedModel, shouldNavigateToSourceDetail name: String) {
-        navigateToSourceDetail(name: name)
+    func handleArticleDetailModelDelegate(action: ArticleDetailModel.DelegateAction) {
+        switch action {
+        case .navigateToAuthorDetail(let name):
+            navigateToAuthorDetail(name: name)
+        case .navigateToSourceDetail(let name):
+            navigateToSourceDetail(name: name)
+        }
     }
     
-    func feedModel(_ model: FeedModel, shouldNavigateToArticleDetail article: Article) {
-        navigateToArticleDetail(article: article)
-    }
-}
-
-extension FeedCoordinator: SourceDetailModelDelegate {
-    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToAuthorDetail name: String) {
-        navigateToAuthorDetail(name: name)
-    }
-    
-    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToSourceDetail name: String) {
-        navigateToSourceDetail(name: name)
-    }
-    
-    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToArticleDetail article: Article) {
-        navigateToArticleDetail(article: article)
+    func handleSourceDetailModelDelegate(action: SourceDetailModel.DelegateAction) {
+        switch action {
+        case .navigateToArticle(let article):
+            navigateToArticleDetail(article: article)
+        case .navigateToSource(let name):
+            navigateToSourceDetail(name: name)
+        case .navigateToAuthor(let name):
+            navigateToAuthorDetail(name: name)
+        }
     }
 }

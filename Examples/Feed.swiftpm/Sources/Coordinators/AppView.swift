@@ -6,25 +6,37 @@ struct AppView: View {
     
     var body: some View {
         TabView {
-            RootNavigationControllerView(controller: coordinator.controller) { screen in
-                switch screen {
-                case let .feedCoordinator(coordinator): FeedCoordinatorView(coordinator: coordinator)
-                case let .feed(destination): FeedDestinationView(destination: destination)
-                }
-            }
-            .tabItem {
-                Label("Latest", systemImage: "newspaper")
-            }
+            feed
             
-            RootNavigationControllerView(controller: coordinator.bookmarksController) { screen in
-                switch screen {
-                case let .bookmarksCoordinator(coordinator): BookmarksCoordinatorView(coordinator: coordinator)
-                case let .bookmarksDestination(destination): BookmarksDestinationView(destination: destination)
-                }
+            settings
+        }
+    }
+    
+    var feed: some View {
+        RootNavigationControllerView(controller: coordinator.feedController) { screen in
+            switch screen {
+            case let .feedCoordinator(coordinator): FeedCoordinatorView(coordinator: coordinator)
+            case let .feed(destination): FeedDestinationView(destination: destination)
+            case let .loginCoordinator(coordinator): LoginCoordinatorView(coordinator: coordinator)
+            case let .login(destination): LoginDestinationView(destination: destination)
             }
-            .tabItem {
-                Label("Bookmarks", systemImage: "bookmark")
+        }
+        .tabItem {
+            Label("Latest", systemImage: "newspaper")
+        }
+    }
+    
+    var settings: some View {
+        RootNavigationControllerView(controller: coordinator.settingsController) { screen in
+            switch screen {
+            case let .settingsCoordinator(coordinator): SettingsCoordinatorView(coordinator: coordinator)
+            case let .settingsDestination(destination): SettingsCoordinatorDestinationView(destination: destination)
+            case let .loginCoordinator(coordinator): LoginCoordinatorView(coordinator: coordinator)
+            case let .loginDestination(destination): LoginDestinationView(destination: destination)
             }
+        }
+        .tabItem {
+            Label("Settings", systemImage: "gear")
         }
     }
 }

@@ -3,8 +3,13 @@ import Observation
 final class ArticleCellModel: Identifiable {
     let article: Article
     let bookmarksStore: BookmarksStore
+   
+    var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
-    weak var delegate: ArticleCellModelDelegate?
+    enum DelegateAction {
+        case navigateToSource(name: String)
+        case navigateToArticle(Article)
+    }
     
     init(
         article: Article,
@@ -19,11 +24,11 @@ final class ArticleCellModel: Identifiable {
     }
     
     func sourceTapped() {
-        delegate?.articleCellModel(self, shouldNavigateToSource: article.source)
+        delegate(.navigateToSource(name: article.source))
     }
     
     func articleTapped() {
-        delegate?.articleCellModel(self, shouldNavigateToArticle: article)
+        delegate(.navigateToArticle(article))
     }
     
     func bookmark() {
@@ -33,9 +38,4 @@ final class ArticleCellModel: Identifiable {
     func removeBookmark() {
         bookmarksStore.remove(article: article)
     }
-}
-
-protocol ArticleCellModelDelegate: AnyObject {
-    func articleCellModel(_ model: ArticleCellModel, shouldNavigateToSource name: String)
-    func articleCellModel(_ model: ArticleCellModel, shouldNavigateToArticle article: Article)
 }

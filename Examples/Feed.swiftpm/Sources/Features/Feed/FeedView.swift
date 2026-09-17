@@ -10,5 +10,12 @@ struct FeedView: View {
         .listStyle(.plain)
         .navigationTitle("Latest")
         .toolbarTitleDisplayMode(.inlineLarge)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button("Login", systemImage: "person") {
+                    model.loginButtonTapped()
+                }
+            }
+        }
     }
 }

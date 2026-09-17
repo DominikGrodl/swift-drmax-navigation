@@ -4,7 +4,13 @@ import Observation
 final class ArticleDetailModel: HashableObject {
     let article: Article
     private let bookmarksStore: BookmarksStore
-    weak var delegate: ArticleDetailModelDelegate?
+    
+    enum DelegateAction {
+        case navigateToAuthorDetail(name: String)
+        case navigateToSourceDetail(name: String)
+    }
+    
+    var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
     init(
         article: Article,
@@ -35,19 +41,14 @@ final class ArticleDetailModel: HashableObject {
     }
     
     func authorButtonTapped() {
-        delegate?.articleDetailModel(self, shouldNavigateToAuthorDetail: article.authorName)
+        delegate(.navigateToAuthorDetail(name: article.authorName))
     }
     
     func sourceButtonTapped() {
-        delegate?.articleDetailModel(self, shouldNavigateToSourceDetail: article.source)
+        delegate(.navigateToSourceDetail(name: article.source))
     }
     
     deinit {
         print("\(Self.self).deinit")
     }
-}
-
-protocol ArticleDetailModelDelegate: AnyObject {
-    func articleDetailModel(_ model: ArticleDetailModel, shouldNavigateToAuthorDetail name: String)
-    func articleDetailModel(_ model: ArticleDetailModel, shouldNavigateToSourceDetail name: String)
 }

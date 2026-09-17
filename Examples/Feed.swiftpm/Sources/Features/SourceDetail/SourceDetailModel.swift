@@ -6,7 +6,13 @@ final class SourceDetailModel: HashableObject {
     
     let articles: [ArticleCellModel]
     
-    weak var delegate: SourceDetailModelDelegate?
+    enum DelegateAction {
+        case navigateToArticle(Article)
+        case navigateToSource(name: String)
+        case navigateToAuthor(name: String)
+    }
+    
+    var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
     init(
         sourceName: String,
@@ -17,24 +23,18 @@ final class SourceDetailModel: HashableObject {
     }
     
     func authorTapped(name: String) {
-        delegate?.sourceDetailModel(self, shouldNavigateToAuthorDetail: name)
+        delegate(.navigateToAuthor(name: name))
     }
     
     func articleTapped(_ article: Article) {
-        delegate?.sourceDetailModel(self, shouldNavigateToArticleDetail: article)
+        delegate(.navigateToArticle(article))
     }
     
     func sourceTapped(name: String) {
-        delegate?.sourceDetailModel(self, shouldNavigateToSourceDetail: name)
+        delegate(.navigateToSource(name: name))
     }
     
     deinit {
         print("\(Self.self).deinit")
     }
-}
-
-protocol SourceDetailModelDelegate: AnyObject {
-    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToArticleDetail article: Article)
-    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToAuthorDetail name: String)
-    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToSourceDetail name: String)
 }
