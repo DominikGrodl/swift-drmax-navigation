@@ -1,11 +1,12 @@
 import SwiftUI
 
-struct GroupDetailView: View {
-    let model: GroupDetailModel
+struct AuthorDetailView: View {
+    let model: AuthorDetailModel
     
     var body: some View {
         List(
-            model.posts,
+            model.articles,
+            id: \.title,
             rowContent: cell
         )
         .listStyle(.plain)
@@ -20,9 +21,11 @@ struct GroupDetailView: View {
         }
     }
     
-    func cell(post: Post) -> some View {
-        PostView(post: post) { post in
-            model.postTapped(post)
-        }
+    func cell(article: Article) -> some View {
+        ArticleView(
+            article: article,
+            onSourceTapped: model.sourceTapped,
+            onArticleTapped: model.articleTapped
+        )
     }
 }

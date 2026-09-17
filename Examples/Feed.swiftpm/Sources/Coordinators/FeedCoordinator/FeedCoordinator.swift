@@ -4,12 +4,17 @@ import CasePaths
 
 @CasePathable
 enum FeedDestination: Hashable {
-    case postDetail(PostDetailModel)
-    case groupDetail(GroupDetailModel)
+    case articleDetail(ArticleDetailModel)
+    case authorDetail(AuthorDetailModel)
+    case sourceDetail(SourceDetailModel)
+}
+
+protocol FeedDestinationProviding {
+    static func feed(_ destination: FeedDestination) -> Self
 }
 
 @Observable
-final class FeedCoordinator<ParentDestination: Hashable & CasePathable>: HashableObject {
+final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDestinationProviding>: HashableObject {
     let controller: NavigationController<ParentDestination, FeedDestination>
     let feedModel: FeedModel
     
@@ -25,48 +30,72 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable>: Hashabl
         }
     }
     
+    private func handleSourceDetailNavigation(action: SourceDetailModel.NavigationAction) {
+        switch action {
+        case let .articleDetail(article): navigateToArticleDetail(article: article)
+        case let .authorDetail(name): navigateToAuthorDetail(name: name)
+        case let .sourceDetail(name): navigateToSourceDetail(name: name)
+        }
+    }
+    
     private func handleFeedNavigation(action: FeedModel.NavigationAction) {
         switch action {
-        case let .postDetail(post): navigateToPostDetail(post: post)
-        case let .group(name): navigateToGroup(name: name)
+        case let .articleDetail(article): navigateToArticleDetail(article: article)
+        case let .authorDetail(name): navigateToAuthorDetail(name: name)
+        case let .sourceDetail(name): navigateToSourceDetail(name: name)
         }
     }
     
-    private func handleGroupNavigation(action: GroupDetailModel.NavigationAction) {
+    private func handleAuthorDetailNavigation(
+        action: AuthorDetailModel.NavigationAction,
+        model: AuthorDetailModel
+    ) {
         switch action {
-        case let .post(post): navigateToPostDetail(post: post)
-        case .dismiss: dismissGroupDetail()
+        case let .toSourceDetail(name): navigateToSourceDetail(name: name)
+        case let .toArticleDetail(article): navigateToArticleDetail(article: article)
+        case .dismiss: dismissAuthorDetail(model: model)
         }
     }
     
-    private func handlePostNavigation(action: PostDetailModel.NavigationAction) {
+    private func handleArticleNavigation(action: ArticleDetailModel.NavigationAction) {
         switch action {
-        case let .group(name): navigateToGroup(name: name)
+        case let .toAuthorDetail(name): navigateToAuthorDetail(name: name)
+        case let .toSourceDetail(name): navigateToSourceDetail(name: name)
         }
     }
     
-    private func navigateToPostDetail(post: Post) {
-        let model = PostDetailModel(post: post)
+    private func navigateToSourceDetail(name: String) {
+        let model = SourceDetailModel(sourceName: name)
         
         model.navigate = { [weak self] action in
-            self?.handlePostNavigation(action: action)
+            self?.handleSourceDetailNavigation(action: action)
         }
         
-        controller.navigate(to: .postDetail(model))
+        controller.navigate(to: .sourceDetail(model))
     }
     
-    private func navigateToGroup(name: String) {
-        let model = GroupDetailModel(
-            groupName: name,
-            navigate: { [weak self] action in
-                self?.handleGroupNavigation(action: action)
-            }
-        )
+    private func navigateToArticleDetail(article: Article) {
+        let model = ArticleDetailModel(article: article)
         
-        controller.navigate(to: .groupDetail(model), style: .sheet)
+        model.navigate = { [weak self] action in
+            self?.handleArticleNavigation(action: action)
+        }
+        
+        controller.navigate(to: .articleDetail(model))
     }
     
-    private func dismissGroupDetail() {
-        controller.popBefore(\.groupDetail)
+    private func navigateToAuthorDetail(name: String) {
+        let model = AuthorDetailModel(authorName: name)
+        
+        model.navigate = { [weak self, weak model] action in
+            guard let model else { return }
+            self?.handleAuthorDetailNavigation(action: action, model: model)
+        }
+        
+        controller.navigate(to: .authorDetail(model), style: .sheet)
+    }
+    
+    func dismissAuthorDetail(model: AuthorDetailModel) {
+        controller.parent.popBefore(.feed(.authorDetail(model)))
     }
 }

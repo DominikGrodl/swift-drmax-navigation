@@ -1,8 +1,9 @@
-import Foundation
 import Observation
 
 @Observable
-final class FeedModel {
+final class SourceDetailModel: HashableObject {
+    let title: String
+    
     let articles: [Article]
     
     var navigate: (NavigationAction) -> Void = { _ in }
@@ -13,8 +14,9 @@ final class FeedModel {
         case sourceDetail(name: String)
     }
     
-    init() {
-        self.articles = .mock
+    init(sourceName: String) {
+        self.title = sourceName
+        self.articles = .mock.filter { $0.source == sourceName }
     }
     
     func authorTapped(name: String) {

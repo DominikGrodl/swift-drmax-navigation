@@ -3,7 +3,7 @@ import Observation
 import CasePaths
 
 @CasePathable
-enum AppDestination: Hashable {
+enum AppDestination: Hashable, FeedDestinationProviding {
     case feedCoordinator(FeedCoordinator<Self>)
     case feed(FeedDestination)
 }

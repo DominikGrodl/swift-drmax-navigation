@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct FeedView: View {
-    let model: FeedModel
+struct SourceDetailView: View {
+    let model: SourceDetailModel
     
     var body: some View {
         List(
@@ -10,11 +10,11 @@ struct FeedView: View {
             rowContent: cell
         )
         .listStyle(.plain)
-        .navigationTitle("Latest")
-        .toolbarTitleDisplayMode(.inlineLarge)
+        .navigationTitle(model.title)
+        .navigationBarTitleDisplayMode(.inline)
     }
     
-    private func cell(article: Article) -> some View {
+    func cell(article: Article) -> some View {
         ArticleView(
             article: article,
             onArticleTapped: model.articleTapped,
@@ -23,9 +23,7 @@ struct FeedView: View {
             AuthorView(
                 authorName: article.authorName,
                 imageUrlString: article.authorHeadshotUrl,
-                onTapped: {
-                    model.authorTapped(name: article.authorName)
-                }
+                onTapped: { model.authorTapped(name: article.authorName) }
             )
         }
     }

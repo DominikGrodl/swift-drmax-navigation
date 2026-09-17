@@ -5,10 +5,12 @@ struct FeedDestinationView: View {
     
     var body: some View {
         switch destination {
-        case let .postDetail(model):
-            PostDetailView(model: model)
-        case let .groupDetail(model):
-            GroupDetailView(model: model)
+        case let .articleDetail(articleDetailModel):
+            ArticleDetailView(model: articleDetailModel)
+        case let .authorDetail(authorDetailModel):
+            AuthorDetailView(model: authorDetailModel)
+        case let .sourceDetail(sourceDetailModel):
+            SourceDetailView(model: sourceDetailModel)
         }
     }
 }
