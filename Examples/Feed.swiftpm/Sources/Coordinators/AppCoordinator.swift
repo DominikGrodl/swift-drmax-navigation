@@ -70,6 +70,21 @@ private extension AppCoordinator {
 
 // MARK: - Navigation
 private extension AppCoordinator {
+    /*
+     Navigating to the same destination from different RootNavigationControllers (tabs) can be achieved like this.
+     You have to specify that the controller you are navigating on has a loginCoordinator(LoginCoordinator) case so that you
+     can use it to push/present, and provide a CaseKeyPath to the destinations of the coordinator.
+     
+     protocol LoginCoordinatorDestinationProviding: Hashable & CasePathable {
+        static func loginCoordinator(_ : LoginCoordinator<Self>) -> Self
+     }
+     
+     Conforming the enum to this protocol ensures that the enum has
+     
+     case loginCoordinator(LoginCoordinator<Self>)
+     
+     so you can use it when calling the navigate(to...) method.
+    */
     func navigateToLogin<Parent: LoginCoordinatorDestinationProviding>(
         on controller: RootNavigationController<Parent>,
         loginDestination: CaseKeyPath<Parent, LoginDestination>,

@@ -7,6 +7,12 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
     let controller: NavigationController<ParentDestination, FeedDestination>
     let feedModel: FeedModel
     
+    /*
+     Coordinators should not generally depend on each other, because it's very easy to create
+     cyclic dependencies and a coordinator should not ever care what a different coordinator does.
+     
+     Therefore we let the root coordinator handle navigating between siblings.
+    */
     enum DelegateAction {
         case navigateToLogin
     }
