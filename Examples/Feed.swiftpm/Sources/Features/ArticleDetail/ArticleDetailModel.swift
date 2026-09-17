@@ -3,29 +3,51 @@ import Observation
 
 final class ArticleDetailModel: HashableObject {
     let article: Article
-    
-    var navigate: (NavigationAction) -> Void = { _ in }
-    
-    enum NavigationAction {
-        case toAuthorDetail(name: String)
-        case toSourceDetail(name: String)
-    }
+    private let bookmarksStore: BookmarksStore
+    weak var delegate: ArticleDetailModelDelegate?
     
     init(
-        article: Article
+        article: Article,
+        bookmarksStore: BookmarksStore
     ) {
         self.article = article
+        self.bookmarksStore = bookmarksStore
+    }
+    
+    var bookmarkButtonTitle: String {
+        isBookmarked ? "Remove bookmark" : "Bookmark"
+    }
+    
+    var bookmarkImageSystemName: String {
+        isBookmarked ? "bookmark.fill" : "bookmark"
+    }
+    
+    var isBookmarked: Bool {
+        bookmarksStore.bookmarks.contains(article)
+    }
+    
+    func bookmarkButtonTapped() {
+        if isBookmarked {
+            bookmarksStore.remove(article: article)
+        } else {
+            bookmarksStore.bookmark(article: article)
+        }
     }
     
     func authorButtonTapped() {
-        navigate(.toAuthorDetail(name: article.authorName))
+        delegate?.articleDetailModel(self, shouldNavigateToAuthorDetail: article.authorName)
     }
     
     func sourceButtonTapped() {
-        navigate(.toSourceDetail(name: article.source))
+        delegate?.articleDetailModel(self, shouldNavigateToSourceDetail: article.source)
     }
     
     deinit {
         print("\(Self.self).deinit")
     }
+}
+
+protocol ArticleDetailModelDelegate: AnyObject {
+    func articleDetailModel(_ model: ArticleDetailModel, shouldNavigateToAuthorDetail name: String)
+    func articleDetailModel(_ model: ArticleDetailModel, shouldNavigateToSourceDetail name: String)
 }

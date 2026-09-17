@@ -1,52 +1,56 @@
 import SwiftUI
 
-struct ArticleView<TopTrailingContent: View>: View {
+struct ArticleView: View {
     let article: Article
-    let onArticleTapped: (Article) -> Void
-    let onSourceTapped: (String) -> Void
-    let topTrailingContent: () -> TopTrailingContent
+    let isBookmarked: Bool
+    let addBookmard: () -> Void
+    let removeBookmark: () -> Void
+    let sourceTapped: () -> Void
+    let articleTapped: () -> Void
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack(alignment: .top) {
                 SourceView(
                     source: article.source,
-                    onTapped: { onSourceTapped(article.source) }
+                    onTapped: sourceTapped
                 )
                 
                 Spacer()
-                
-                topTrailingContent()
             }
             
             Text(article.title)
                 .font(.headline)
             
-            HStack {
+            HStack(alignment: .bottom) {
                 if let perex = article.sections.first?.text {
                     Text(perex)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+                
+                Spacer()
+                
+                if isBookmarked {
+                    Image(systemName: "bookmark.fill")
+                        .font(.footnote)
+                        .foregroundStyle(Color.accentColor)
+                }
             }
         }
-        .onTapGesture {
-            onArticleTapped(article)
+        .onTapGesture(perform: articleTapped)
+        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
+            if isBookmarked {
+                Button("Remove bookmark", systemImage: "bookmark.slash") {
+                    removeBookmark()
+                }
+                .tint(.red)
+            } else {
+                Button("Bookmark", systemImage: "bookmark") {
+                    addBookmard()
+                }
+                .tint(.accentColor)
+            }
         }
-    }
-}
-
-extension ArticleView where TopTrailingContent == EmptyView {
-    init(
-        article: Article,
-        onSourceTapped: @escaping (String) -> Void,
-        onArticleTapped: @escaping (Article) -> Void
-    ) {
-        self.init(
-            article: article,
-            onArticleTapped: onArticleTapped,
-            onSourceTapped: onSourceTapped,
-            topTrailingContent: { EmptyView() }
-        )
     }
 }

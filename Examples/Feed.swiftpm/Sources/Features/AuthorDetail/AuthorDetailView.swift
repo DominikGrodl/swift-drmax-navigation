@@ -4,11 +4,9 @@ struct AuthorDetailView: View {
     let model: AuthorDetailModel
     
     var body: some View {
-        List(
-            model.articles,
-            id: \.title,
-            rowContent: cell
-        )
+        List(model.articles) {
+            ArticleCellView(model: $0)
+        }
         .listStyle(.plain)
         .navigationTitle(model.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -19,13 +17,5 @@ struct AuthorDetailView: View {
                 }
             }
         }
-    }
-    
-    func cell(article: Article) -> some View {
-        ArticleView(
-            article: article,
-            onSourceTapped: model.sourceTapped,
-            onArticleTapped: model.articleTapped
-        )
     }
 }

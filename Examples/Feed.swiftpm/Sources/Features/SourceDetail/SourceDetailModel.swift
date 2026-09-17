@@ -4,34 +4,37 @@ import Observation
 final class SourceDetailModel: HashableObject {
     let title: String
     
-    let articles: [Article]
+    let articles: [ArticleCellModel]
     
-    var navigate: (NavigationAction) -> Void = { _ in }
+    weak var delegate: SourceDetailModelDelegate?
     
-    enum NavigationAction {
-        case articleDetail(Article)
-        case authorDetail(name: String)
-        case sourceDetail(name: String)
-    }
-    
-    init(sourceName: String) {
+    init(
+        sourceName: String,
+        bookmarksStore: BookmarksStore
+    ) {
         self.title = sourceName
-        self.articles = .mock.filter { $0.source == sourceName }
+        self.articles = Array<Article>.mock.filter { $0.source == sourceName }.map { ArticleCellModel(article: $0, bookmarksStore: bookmarksStore) }
     }
     
     func authorTapped(name: String) {
-        navigate(.authorDetail(name: name))
+        delegate?.sourceDetailModel(self, shouldNavigateToAuthorDetail: name)
     }
     
     func articleTapped(_ article: Article) {
-        navigate(.articleDetail(article))
+        delegate?.sourceDetailModel(self, shouldNavigateToArticleDetail: article)
     }
     
     func sourceTapped(name: String) {
-        navigate(.sourceDetail(name: name))
+        delegate?.sourceDetailModel(self, shouldNavigateToSourceDetail: name)
     }
     
     deinit {
         print("\(Self.self).deinit")
     }
+}
+
+protocol SourceDetailModelDelegate: AnyObject {
+    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToArticleDetail article: Article)
+    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToAuthorDetail name: String)
+    func sourceDetailModel(_ model: SourceDetailModel, shouldNavigateToSourceDetail name: String)
 }

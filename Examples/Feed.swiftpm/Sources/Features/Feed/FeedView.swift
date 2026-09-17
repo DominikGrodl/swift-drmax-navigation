@@ -4,29 +4,11 @@ struct FeedView: View {
     let model: FeedModel
     
     var body: some View {
-        List(
-            model.articles,
-            id: \.title,
-            rowContent: cell
-        )
+        List(model.articles) {
+            ArticleCellView(model: $0)
+        }
         .listStyle(.plain)
         .navigationTitle("Latest")
         .toolbarTitleDisplayMode(.inlineLarge)
-    }
-    
-    private func cell(article: Article) -> some View {
-        ArticleView(
-            article: article,
-            onArticleTapped: model.articleTapped,
-            onSourceTapped: model.sourceTapped
-        ) {
-            AuthorView(
-                authorName: article.authorName,
-                imageUrlString: article.authorHeadshotUrl,
-                onTapped: {
-                    model.authorTapped(name: article.authorName)
-                }
-            )
-        }
     }
 }

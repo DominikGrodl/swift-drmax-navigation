@@ -35,6 +35,15 @@ struct ArticleDetailView: View {
         }
         .navigationTitle(model.article.title)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button(
+                    model.bookmarkButtonTitle,
+                    systemImage: model.bookmarkImageSystemName,
+                    action: model.bookmarkButtonTapped
+                )
+            }
+        }
     }
     
     private func sectionView(section: Article.Section) -> some View {

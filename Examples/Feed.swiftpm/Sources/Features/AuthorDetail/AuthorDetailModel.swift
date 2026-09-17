@@ -4,35 +4,40 @@ import Observation
 final class AuthorDetailModel: HashableObject {
     let title: String
     
-    let articles: [Article]
+    let articles: [ArticleCellModel]
     
-    var navigate: (NavigationAction) -> Void = { _ in }
+    let bookmarksStore: BookmarksStore
     
-    enum NavigationAction {
-        case toArticleDetail(Article)
-        case toSourceDetail(name: String)
-        case dismiss
+    weak var delegate: AuthorDetailModelDelegate? {
+        didSet {
+            articles.forEach { $0.delegate = delegate }
+        }
     }
     
-    init(authorName: String) {
+    init(
+        authorName: String,
+        bookmarksStore: BookmarksStore
+    ) {
+        self.bookmarksStore = bookmarksStore
         self.title = authorName
-        self.articles = .mock.filter { $0.authorName == authorName }
-        self.navigate = navigate
+        self.articles = Array<Article>.mock.filter { $0.authorName == authorName }.map { ArticleCellModel(article: $0, bookmarksStore: bookmarksStore) }
+    }
+    
+    func isBookmarked(article: Article) -> Bool {
+        bookmarksStore.bookmarks.contains(article)
     }
     
     func closeButtonTapped() {
-        navigate(.dismiss)
-    }
-    
-    func articleTapped(_ article: Article) {
-        navigate(.toArticleDetail(article))
-    }
-    
-    func sourceTapped(name: String) {
-        navigate(.toSourceDetail(name: name))
+        delegate?.authorDetailModelShouldDismiss(self)
     }
     
     deinit {
         print("\(Self.self).deinit")
     }
+}
+
+protocol AuthorDetailModelDelegate: ArticleCellModelDelegate {
+    func authorDetailModel(_ model: AuthorDetailModel, shouldNavigateToArticleDetail article: Article)
+    func authorDetailModel(_ model: AuthorDetailModel, shouldNavigateToSourceDetail name: String)
+    func authorDetailModelShouldDismiss(_ model: AuthorDetailModel)
 }

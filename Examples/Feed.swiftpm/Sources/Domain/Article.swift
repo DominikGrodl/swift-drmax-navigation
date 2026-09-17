@@ -1,13 +1,13 @@
 import Foundation
 
-struct Article {
+struct Article: Hashable {
     let authorName: String
     let source: String
     let authorHeadshotUrl: String
     let title: String
     let sections: [Section]
     
-    struct Section  {
+    struct Section: Hashable {
         let title: String
         let text: String
     }

@@ -3,33 +3,29 @@ import Observation
 
 @Observable
 final class FeedModel {
-    let articles: [Article]
+    let articles: [ArticleCellModel]
     
-    var navigate: (NavigationAction) -> Void = { _ in }
-    
-    enum NavigationAction {
-        case articleDetail(Article)
-        case authorDetail(name: String)
-        case sourceDetail(name: String)
+    weak var delegate: FeedModelDelegate? {
+        didSet {
+            articles.forEach {
+                $0.delegate = delegate
+            }
+        }
     }
     
-    init() {
-        self.articles = .mock
-    }
-    
-    func authorTapped(name: String) {
-        navigate(.authorDetail(name: name))
-    }
-    
-    func articleTapped(_ article: Article) {
-        navigate(.articleDetail(article))
-    }
-    
-    func sourceTapped(name: String) {
-        navigate(.sourceDetail(name: name))
+    init(
+        bookmarksStore: BookmarksStore
+    ) {
+        self.articles = Array<Article>.mock.map { ArticleCellModel(article: $0, bookmarksStore: bookmarksStore) }
     }
     
     deinit {
         print("\(Self.self).deinit")
     }
+}
+
+protocol FeedModelDelegate: ArticleCellModelDelegate {
+    func feedModel(_ model: FeedModel, shouldNavigateToArticleDetail article: Article)
+    func feedModel(_ model: FeedModel, shouldNavigateToAuthorDetail name: String)
+    func feedModel(_ model: FeedModel, shouldNavigateToSourceDetail name: String)
 }
