@@ -60,7 +60,6 @@ public extension RootNavigationController {
 
     /// Pops all screens and dismisses all presentations, returning to the root screen.
     /// - Parameters:
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func popToRoot(
         animated: Bool = true,
@@ -76,7 +75,6 @@ public extension RootNavigationController {
 
     /// Pops the topmost screen or dismisses the topmost presentation.
     /// - Parameters:
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func pop(
         completion: @escaping () -> Void = {}
@@ -159,7 +157,6 @@ public extension RootNavigationController {
 
     /// Pops all screens in the topmost presentation, but keeps the presentation itself.
     /// - Parameters:
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func popToPresentationRoot(
         animated: Bool = true,

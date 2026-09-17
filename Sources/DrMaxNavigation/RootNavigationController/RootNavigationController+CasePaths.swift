@@ -16,7 +16,6 @@ extension RootNavigationController where Screen: CasePathable {
     /// Pops screens until a screen matching the specified case is at the top, then removes it too.
     /// - Parameters:
     ///   - element: A case key path to the destination screen case.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     public func popBefore(
         _ element: PartialCaseKeyPath<Screen>,
@@ -41,8 +40,6 @@ extension RootNavigationController where Screen: CasePathable {
 
     /// Pops screens until a screen matching the specified case is at the top.
     /// - Parameters:
-    ///   - element: A case key path to the destination screen case.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     public func popTo(
         _ element: PartialCaseKeyPath<Screen>,
