@@ -11,8 +11,6 @@ struct FeedDestinationView: View {
             AuthorDetailView(model: authorDetailModel)
         case let .sourceDetail(sourceDetailModel):
             SourceDetailView(model: sourceDetailModel)
-        case let .bookmarks(bookmarksModel):
-            BookmarksView(model: bookmarksModel)
         }
     }
 }

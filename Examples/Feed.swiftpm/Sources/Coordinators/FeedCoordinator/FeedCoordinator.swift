@@ -7,8 +7,6 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
     let controller: NavigationController<ParentDestination, FeedDestination>
     let feedModel: FeedModel
     
-    private let bookmarksStore: BookmarksStore
-    
     enum DelegateAction {
         case navigateToLogin
     }
@@ -16,14 +14,11 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
     var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
     init(
-        controller: NavigationController<ParentDestination, FeedDestination>,
-        bookmarksStore: BookmarksStore
+        controller: NavigationController<ParentDestination, FeedDestination>
     ) {
         self.controller = controller
         
-        self.feedModel = FeedModel(bookmarksStore: bookmarksStore)
-        
-        self.bookmarksStore = bookmarksStore
+        self.feedModel = FeedModel()
         
         feedModel.delegate = { [weak self] action in
             self?.handleFeedModelDelegate(action: action)
@@ -31,7 +26,7 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
     }
     
     private func navigateToSourceDetail(name: String) {
-        let model = SourceDetailModel(sourceName: name, bookmarksStore: bookmarksStore)
+        let model = SourceDetailModel(sourceName: name)
         
         model.delegate = { [weak self] action in
             self?.handleSourceDetailModelDelegate(action: action)
@@ -41,10 +36,7 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
     }
     
     private func navigateToArticleDetail(article: Article) {
-        let model = ArticleDetailModel(
-            article: article,
-            bookmarksStore: bookmarksStore
-        )
+        let model = ArticleDetailModel(article: article)
         
         model.delegate = { [weak self] action in
             self?.handleArticleDetailModelDelegate(action: action)
@@ -54,7 +46,7 @@ final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDes
     }
     
     private func navigateToAuthorDetail(name: String) {
-        let model = AuthorDetailModel(authorName: name, bookmarksStore: bookmarksStore)
+        let model = AuthorDetailModel(authorName: name)
         
         model.delegate = { [weak self, weak model] action in
             self?.handleAuthorDetailModelDelegate(action: action, from: model)

@@ -2,25 +2,17 @@ import Observation
 
 final class ArticleCellModel: Identifiable {
     let article: Article
-    let bookmarksStore: BookmarksStore
    
     var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
     enum DelegateAction {
         case navigateToSource(name: String)
         case navigateToArticle(Article)
+        case navigateToAuthor(name: String)
     }
     
-    init(
-        article: Article,
-        bookmarksStore: BookmarksStore
-    ) {
+    init(article: Article) {
         self.article = article
-        self.bookmarksStore = bookmarksStore
-    }
-    
-    var isBookmarked: Bool {
-        bookmarksStore.bookmarks.contains(article)
     }
     
     func sourceTapped() {
@@ -31,11 +23,7 @@ final class ArticleCellModel: Identifiable {
         delegate(.navigateToArticle(article))
     }
     
-    func bookmark() {
-        bookmarksStore.bookmark(article: article)
-    }
-    
-    func removeBookmark() {
-        bookmarksStore.remove(article: article)
+    func authorTapped() {
+        delegate(.navigateToAuthor(name: article.authorName))
     }
 }

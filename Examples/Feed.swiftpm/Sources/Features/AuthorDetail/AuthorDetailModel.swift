@@ -6,8 +6,6 @@ final class AuthorDetailModel: HashableObject {
     
     let articles: [ArticleCellModel]
     
-    let bookmarksStore: BookmarksStore
-    
     enum DelegateAction {
         case navigateToArticle(Article)
         case navigateToAuthor(name: String)
@@ -17,23 +15,15 @@ final class AuthorDetailModel: HashableObject {
     
     var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
-    init(
-        authorName: String,
-        bookmarksStore: BookmarksStore
-    ) {
-        self.bookmarksStore = bookmarksStore
+    init(authorName: String) {
         self.title = authorName
-        self.articles = Array<Article>.mock.filter { $0.authorName == authorName }.map { ArticleCellModel(article: $0, bookmarksStore: bookmarksStore) }
+        self.articles = Array<Article>.mock.filter { $0.authorName == authorName }.map { ArticleCellModel(article: $0) }
         
         articles.forEach {
             $0.delegate = { [weak self] in
                 self?.handleArticleCellModelDelegate(action: $0)
             }
         }
-    }
-    
-    func isBookmarked(article: Article) -> Bool {
-        bookmarksStore.bookmarks.contains(article)
     }
     
     func closeButtonTapped() {
@@ -53,6 +43,8 @@ private extension AuthorDetailModel {
             delegate(.navigateToSource(name: name))
         case .navigateToArticle(let article):
             delegate(.navigateToArticle(article))
+        case .navigateToAuthor(let name):
+            delegate(.navigateToAuthor(name: name))
         }
     }
 }

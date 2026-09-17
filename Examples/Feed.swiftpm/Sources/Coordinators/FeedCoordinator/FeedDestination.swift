@@ -5,7 +5,6 @@ enum FeedDestination: Hashable {
     case articleDetail(ArticleDetailModel)
     case authorDetail(AuthorDetailModel)
     case sourceDetail(SourceDetailModel)
-    case bookmarks(BookmarksModel)
 }
 
 protocol FeedDestinationProviding {

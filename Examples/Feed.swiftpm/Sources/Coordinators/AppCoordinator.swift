@@ -7,15 +7,10 @@ final class AppCoordinator {
     let feedController: RootNavigationController<FeedCoordinatorDestination>
     let settingsController: RootNavigationController<SettingsDestination>
     
-    init(
-        bookmarksStore: BookmarksStore
-    ) {
+    init() {
         let feedController = RootNavigationController<FeedCoordinatorDestination>()
         
-        let feedCoordinator = FeedCoordinator(
-            controller: feedController.pullback(on: \.feed),
-            bookmarksStore: bookmarksStore
-        )
+        let feedCoordinator = FeedCoordinator(controller: feedController.pullback(on: \.feed))
         
         feedController.set(root: .feedCoordinator(feedCoordinator))
         

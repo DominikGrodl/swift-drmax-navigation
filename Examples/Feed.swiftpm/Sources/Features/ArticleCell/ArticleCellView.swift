@@ -6,11 +6,9 @@ struct ArticleCellView: View {
     var body: some View {
         ArticleView(
             article: model.article,
-            isBookmarked: model.isBookmarked,
-            addBookmard: model.bookmark,
-            removeBookmark: model.removeBookmark,
             sourceTapped: model.sourceTapped,
-            articleTapped: model.articleTapped
+            articleTapped: model.articleTapped,
+            authorTapped: model.authorTapped
         )
     }
 }

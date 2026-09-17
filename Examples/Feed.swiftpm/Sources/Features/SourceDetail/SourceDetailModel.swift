@@ -14,12 +14,15 @@ final class SourceDetailModel: HashableObject {
     
     var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
-    init(
-        sourceName: String,
-        bookmarksStore: BookmarksStore
-    ) {
+    init(sourceName: String) {
         self.title = sourceName
-        self.articles = Array<Article>.mock.filter { $0.source == sourceName }.map { ArticleCellModel(article: $0, bookmarksStore: bookmarksStore) }
+        self.articles = Array<Article>.mock.filter { $0.source == sourceName }.map { ArticleCellModel(article: $0) }
+        
+        articles.forEach {
+            $0.delegate = { [weak self] action in
+                self?.handleArticleCellModelDelegate(action: action)
+            }
+        }
     }
     
     func authorTapped(name: String) {
@@ -38,3 +41,20 @@ final class SourceDetailModel: HashableObject {
         print("\(Self.self).deinit")
     }
 }
+
+// MARK: - Delegate
+private extension SourceDetailModel {
+    func handleArticleCellModelDelegate(action: ArticleCellModel.DelegateAction) {
+        switch action {
+        case .navigateToSource(let name):
+            delegate(.navigateToSource(name: name))
+            
+        case .navigateToArticle(let article):
+            delegate(.navigateToArticle(article))
+            
+        case .navigateToAuthor(let name):
+            delegate(.navigateToAuthor(name: name))
+        }
+    }
+}
+

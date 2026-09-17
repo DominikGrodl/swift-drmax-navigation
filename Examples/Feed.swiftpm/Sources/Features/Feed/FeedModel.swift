@@ -14,10 +14,8 @@ final class FeedModel {
     
     var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
-    init(
-        bookmarksStore: BookmarksStore
-    ) {
-        self.articles = Array<Article>.mock.map { ArticleCellModel(article: $0, bookmarksStore: bookmarksStore) }
+    init() {
+        self.articles = Array<Article>.mock.map { ArticleCellModel(article: $0) }
         
         articles.forEach { model in
             model.delegate = { [weak self] action in
@@ -44,6 +42,9 @@ private extension FeedModel {
             
         case .navigateToArticle(let article):
             delegate(.navigateToArticle(article))
+            
+        case .navigateToAuthor(let name):
+            delegate(.navigateToAuthor(name: name))
         }
     }
 }
