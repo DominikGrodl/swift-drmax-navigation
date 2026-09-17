@@ -11,9 +11,15 @@ struct SettingsView: View {
                 }
             }
             
-            Section("Bookmarks") {
-                Button("Bookmarks") {
-                    model.loginButtonTapped()
+            Section("Notification") {
+                Button("Notifications") {
+                    model.notificationsButtonTapped()
+                }
+            }
+            
+            Section("Activity") {
+                Button("Recent activity") {
+                    model.activityButtonTapped()
                 }
             }
         }
