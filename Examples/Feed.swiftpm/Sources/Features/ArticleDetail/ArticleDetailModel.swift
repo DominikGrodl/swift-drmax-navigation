@@ -22,8 +22,4 @@ final class ArticleDetailModel: HashableObject {
     func sourceButtonTapped() {
         delegate(.navigateToSourceDetail(name: article.source))
     }
-    
-    deinit {
-        print("\(Self.self).deinit")
-    }
 }

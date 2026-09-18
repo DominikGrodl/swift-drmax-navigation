@@ -2,6 +2,14 @@ import DrMaxNavigation
 import Observation
 import CasePaths
 
+/*
+ Every coordinator needs a parent generic to function, so that it can hold onto a NavigationController scoped to
+ its destinations. You always create a {Coordinator name}Destination enum (FeedDestination in this case), which lists all the destinations this coordinator
+ can navigate to. Besides these two files, it is also advised to create a {Coordinator name}DestinationView (FeedDestinationView) which takes in the destination
+ and switches over it, so that it is easy for the parent to use it inside their RootNavigationControllerView content, and  {Coordinator name}CoordinatorView (FeedCoordinatorView)
+ which takes in the coordinator and defines what is the appropriate start destination, in this case it is the FeedView, which gets the feedModel passed in.
+*/
+
 @Observable
 final class FeedCoordinator<ParentDestination: Hashable & CasePathable & FeedDestinationProviding>: HashableObject {
     let controller: NavigationController<ParentDestination, FeedDestination>

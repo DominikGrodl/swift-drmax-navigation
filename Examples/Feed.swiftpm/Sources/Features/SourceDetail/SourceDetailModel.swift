@@ -36,10 +36,6 @@ final class SourceDetailModel: HashableObject {
     func sourceTapped(name: String) {
         delegate(.navigateToSource(name: name))
     }
-    
-    deinit {
-        print("\(Self.self).deinit")
-    }
 }
 
 // MARK: - Delegate

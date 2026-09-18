@@ -1,7 +1,7 @@
 import SwiftUI
 
-struct SettingsCoordinatorDestinationView: View {
-    let destination: SettingsCoordinatorDestination
+struct SettingsDestinationView: View {
+    let destination: SettingsDestination
     
     var body: some View {
         switch destination {

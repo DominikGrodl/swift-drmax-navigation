@@ -15,7 +15,7 @@ struct AppView: View {
     var feed: some View {
         /*
          Same as RootNavigationController: You create RootNavigationControllerView once and subsequent presentation handles
-         putting your Views inside a NavigationStack for you.
+         putting your Views inside a NavigationStack for you when needed.
         */
         RootNavigationControllerView(controller: coordinator.feedController) { screen in
             switch screen {
@@ -34,7 +34,7 @@ struct AppView: View {
         RootNavigationControllerView(controller: coordinator.settingsController) { screen in
             switch screen {
             case let .settingsCoordinator(coordinator): SettingsCoordinatorView(coordinator: coordinator)
-            case let .settingsDestination(destination): SettingsCoordinatorDestinationView(destination: destination)
+            case let .settingsDestination(destination): SettingsDestinationView(destination: destination)
             case let .loginCoordinator(coordinator): LoginCoordinatorView(coordinator: coordinator)
             case let .loginDestination(destination): LoginDestinationView(destination: destination)
             }

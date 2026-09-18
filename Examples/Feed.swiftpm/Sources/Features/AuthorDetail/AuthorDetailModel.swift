@@ -29,10 +29,6 @@ final class AuthorDetailModel: HashableObject {
     func closeButtonTapped() {
         delegate(.dismiss)
     }
-    
-    deinit {
-        print("\(Self.self).deinit")
-    }
 }
 
 // MARK: - Delegate

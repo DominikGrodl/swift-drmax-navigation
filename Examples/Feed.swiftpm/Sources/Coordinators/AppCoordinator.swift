@@ -9,7 +9,7 @@ final class AppCoordinator {
      NavigationController(s).
     */
     let feedController: RootNavigationController<FeedCoordinatorDestination>
-    let settingsController: RootNavigationController<SettingsDestination>
+    let settingsController: RootNavigationController<SettingsCoordinatorDestination>
     
     init() {
         let feedController = RootNavigationController<FeedCoordinatorDestination>()
@@ -20,7 +20,7 @@ final class AppCoordinator {
         
         self.feedController = feedController
         
-        let settingsController = RootNavigationController<SettingsDestination>()
+        let settingsController = RootNavigationController<SettingsCoordinatorDestination>()
         
         let settingsCoordinator = SettingsCoordinator(controller: settingsController.pullback(on: \.settingsDestination))
         
@@ -56,7 +56,7 @@ private extension AppCoordinator {
         }
     }
     
-    func handleSettingsCoordinatorDelegate(action: SettingsCoordinator<SettingsDestination>.DelegateAction) {
+    func handleSettingsCoordinatorDelegate(action: SettingsCoordinator<SettingsCoordinatorDestination>.DelegateAction) {
         switch action {
         case .navigateToLogin:
             navigateToLogin(

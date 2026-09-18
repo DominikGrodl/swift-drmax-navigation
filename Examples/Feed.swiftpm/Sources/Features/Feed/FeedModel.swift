@@ -27,10 +27,6 @@ final class FeedModel {
     func loginButtonTapped() {
         delegate(.navigateToLogin)
     }
-    
-    deinit {
-        print("\(Self.self).deinit")
-    }
 }
 
 // MARK: - Delegate

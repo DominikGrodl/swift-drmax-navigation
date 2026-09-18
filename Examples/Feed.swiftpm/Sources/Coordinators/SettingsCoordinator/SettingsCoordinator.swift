@@ -3,7 +3,7 @@ import Foundation
 
 @Observable
 final class SettingsCoordinator<Parent: Hashable>: HashableObject {
-    let controller: NavigationController<Parent, SettingsCoordinatorDestination>
+    let controller: NavigationController<Parent, SettingsDestination>
     let rootModel: SettingsModel
     
     var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
@@ -12,7 +12,7 @@ final class SettingsCoordinator<Parent: Hashable>: HashableObject {
         case navigateToLogin
     }
     
-    init(controller: NavigationController<Parent, SettingsCoordinatorDestination>) {
+    init(controller: NavigationController<Parent, SettingsDestination>) {
         self.controller = controller
         
         let settingsModel = SettingsModel()
