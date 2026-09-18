@@ -8,6 +8,8 @@ A navigation tree is a 2D collection of navigation destinations chained one afte
 
 ## Basic usage
 
+An example of using the tools this library provides can be found in the [Examples](./Examples) folder.
+
 This library ships two basic controllers:
 
 - **RootNavigationController**
