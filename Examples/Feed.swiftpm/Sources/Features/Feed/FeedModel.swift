@@ -15,7 +15,7 @@ final class FeedModel {
     var delegate: (DelegateAction) -> Void = { reportUnimplemented($0) }
     
     init() {
-        self.articles = Array<Article>.mock.map { ArticleCellModel(article: $0) }
+        self.articles = [Article].mock.map { ArticleCellModel(article: $0) }
         
         articles.forEach { model in
             model.delegate = { [weak self] action in

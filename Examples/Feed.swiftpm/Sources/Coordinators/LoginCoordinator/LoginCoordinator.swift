@@ -1,6 +1,6 @@
-import Foundation
-import DrMaxNavigation
 import CasePaths
+import DrMaxNavigation
+import Foundation
 
 @Observable
 final class LoginCoordinator<ParentDestination: Hashable & CasePathable>: HashableObject {

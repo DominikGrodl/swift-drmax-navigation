@@ -1,6 +1,6 @@
 public protocol HashableObject: AnyObject, Hashable {}
 extension HashableObject {
-    static func ==(lhs: Self, rhs: Self) -> Bool {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         lhs === rhs
     }
     

@@ -1,12 +1,12 @@
+import CasePaths
 import DrMaxNavigation
 import Observation
-import CasePaths
 
 @Observable
 final class AppCoordinator {
     /*
-     You generally hold into the RootNavigationController as close to the app root as possible. After creating a RootNavigationController, you never create it elsewhere, all other navigation happens through scoped
-     NavigationController(s).
+    You generally hold into the RootNavigationController as close to the app root as possible. After creating a RootNavigationController, you never create it elsewhere, all other navigation happens through scoped
+    NavigationController(s).
     */
     let feedController: RootNavigationController<FeedCoordinatorDestination>
     let settingsController: RootNavigationController<SettingsCoordinatorDestination>
@@ -22,7 +22,9 @@ final class AppCoordinator {
         
         let settingsController = RootNavigationController<SettingsCoordinatorDestination>()
         
-        let settingsCoordinator = SettingsCoordinator(controller: settingsController.pullback(on: \.settingsDestination))
+        let settingsCoordinator = SettingsCoordinator(
+            controller: settingsController.pullback(on: \.settingsDestination)
+        )
         
         settingsController.set(root: .settingsCoordinator(settingsCoordinator))
         
@@ -47,9 +49,9 @@ private extension AppCoordinator {
                 on: feedController,
                 loginDestination: \.login,
                 /*
-                 Presenting to a sheet presents the destination and internally wraps it in its own navigation mechanism.
-                 That way you don't have to manage stacks for presented destinations and can freely push other destinations.
-                 The library will always find the top most presentation and add new destinations to its stack.
+                Presenting to a sheet presents the destination and internally wraps it in its own navigation mechanism.
+                That way you don't have to manage stacks for presented destinations and can freely push other destinations.
+                The library will always find the top most presentation and add new destinations to its stack.
                 */
                 style: .sheet
             )
@@ -71,19 +73,19 @@ private extension AppCoordinator {
 // MARK: - Navigation
 private extension AppCoordinator {
     /*
-     Navigating to the same destination from different RootNavigationControllers (tabs) can be achieved like this.
-     You have to specify that the controller you are navigating on has a loginCoordinator(LoginCoordinator) case so that you
-     can use it to push/present, and provide a CaseKeyPath to the destinations of the coordinator.
+    Navigating to the same destination from different RootNavigationControllers (tabs) can be achieved like this.
+    You have to specify that the controller you are navigating on has a loginCoordinator(LoginCoordinator) case so that you
+    can use it to push/present, and provide a CaseKeyPath to the destinations of the coordinator.
      
-     protocol LoginCoordinatorDestinationProviding: Hashable & CasePathable {
-        static func loginCoordinator(_ : LoginCoordinator<Self>) -> Self
-     }
-     
-     Conforming the enum to this protocol ensures that the enum has
-     
-     case loginCoordinator(LoginCoordinator<Self>)
-     
-     so you can use it when calling the navigate(to...) method.
+    protocol LoginCoordinatorDestinationProviding: Hashable & CasePathable {
+    static func loginCoordinator(_ : LoginCoordinator<Self>) -> Self
+    }
+    
+    Conforming the enum to this protocol ensures that the enum has
+    
+    case loginCoordinator(LoginCoordinator<Self>)
+    
+    so you can use it when calling the navigate(to...) method.
     */
     func navigateToLogin<Parent: LoginCoordinatorDestinationProviding>(
         on controller: RootNavigationController<Parent>,

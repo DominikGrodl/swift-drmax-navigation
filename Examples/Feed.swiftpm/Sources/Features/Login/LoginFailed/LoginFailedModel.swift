@@ -8,7 +8,6 @@ final class LoginFailedModel: HashableObject {
         case dismiss
     }
     
-    
     func tryAgainButtonTapped() {
         delegate(.backToLogin)
     }

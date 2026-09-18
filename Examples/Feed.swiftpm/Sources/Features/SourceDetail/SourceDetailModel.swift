@@ -16,7 +16,7 @@ final class SourceDetailModel: HashableObject {
     
     init(sourceName: String) {
         self.title = sourceName
-        self.articles = Array<Article>.mock.filter { $0.source == sourceName }.map { ArticleCellModel(article: $0) }
+        self.articles = [Article].mock.filter { $0.source == sourceName }.map { ArticleCellModel(article: $0) }
         
         articles.forEach {
             $0.delegate = { [weak self] action in
@@ -53,4 +53,3 @@ private extension SourceDetailModel {
         }
     }
 }
-

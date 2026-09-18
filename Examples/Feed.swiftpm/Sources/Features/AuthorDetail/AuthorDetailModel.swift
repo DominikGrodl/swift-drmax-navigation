@@ -17,7 +17,7 @@ final class AuthorDetailModel: HashableObject {
     
     init(authorName: String) {
         self.title = authorName
-        self.articles = Array<Article>.mock.filter { $0.authorName == authorName }.map { ArticleCellModel(article: $0) }
+        self.articles = [Article].mock.filter { $0.authorName == authorName }.map { ArticleCellModel(article: $0) }
         
         articles.forEach {
             $0.delegate = { [weak self] in

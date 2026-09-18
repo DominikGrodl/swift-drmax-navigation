@@ -22,7 +22,6 @@ struct LoginFailedView: View {
                     .buttonStyle(.bordered)
                     .controlSize(.large)
                     .buttonBorderShape(.capsule)
-                
             }
         }
     }

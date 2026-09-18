@@ -1,5 +1,5 @@
-import SwiftUI
 import DrMaxNavigation
+import SwiftUI
 
 struct AppView: View {
     let coordinator: AppCoordinator
@@ -14,8 +14,8 @@ struct AppView: View {
     
     var feed: some View {
         /*
-         Same as RootNavigationController: You create RootNavigationControllerView once and subsequent presentation handles
-         putting your Views inside a NavigationStack for you when needed.
+        Same as RootNavigationController: You create RootNavigationControllerView once and subsequent presentation handles
+        putting your Views inside a NavigationStack for you when needed.
         */
         RootNavigationControllerView(controller: coordinator.feedController) { screen in
             switch screen {

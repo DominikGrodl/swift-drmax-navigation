@@ -1,3 +1,4 @@
+// swiftlint:disable file_length
 import Foundation
 
 struct Article: Hashable {
@@ -13,9 +14,9 @@ struct Article: Hashable {
     }
 }
 
+// swiftlint:disable line_length
 extension Array<Article> {
     static let mock: [Article] = [
-        
         // MARK: - Amelia Hart — The Morning Post
         
         Article(
@@ -732,3 +733,4 @@ extension Array<Article> {
         )
     ]
 }
+// swiftlint:enable line_length
