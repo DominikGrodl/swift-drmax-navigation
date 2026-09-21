@@ -31,6 +31,7 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
     public var path: [NavigationElement<Screen>]
     public internal(set) var presentation: Presentation<Screen>?
 
+    
     init(
         root: Screen? = nil,
         path: [Screen] = [],
@@ -67,12 +68,13 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
 // MARK: - Private Methods
 @_spi(Internal)
 public extension RootNavigationController {
-    func remove(
+    func removeFrom(
         index: Array<Screen>.Index,
         from controller: RootNavigationController,
         completion: @escaping () -> Void
     ) {
         guard controller.path.indices.contains(index) else {
+            completion()
             return
         }
         
@@ -96,14 +98,19 @@ public extension RootNavigationController {
         let animated: Bool
         
         if index == controller.path.indices.last {
-            animated = controller.presentation?.controller.root?.wasNavigatedWithAnimation ?? false
-        } else {
+            animated = controller.presentation?.controller.root?.wasNavigatedWithAnimation ?? true
+        } else if controller.path.indices.contains(poppedElementIndex) {
             animated = controller.path[poppedElementIndex].wasNavigatedWithAnimation
+        } else {
+            animated = true
         }
         
         Transaction.conditionalyDisableAnimations(animated: animated) {
             controller.presentation = nil
-            controller.path.removeSubrange(poppedElementIndex...)
+            
+            if controller.path.indices.contains(poppedElementIndex) {
+                controller.path.removeSubrange(poppedElementIndex...)
+            }
         } completion: {
             completion()
         }
@@ -113,7 +120,11 @@ public extension RootNavigationController {
         from controller: RootNavigationController,
         completion: @escaping () -> Void
     ) {
-        guard let presentation = controller.presentation else { return }
+        guard let presentation = controller.presentation else {
+            completion()
+            return
+        }
+        
         let animated = presentation.controller.root?.wasNavigatedWithAnimation ?? true
         
         Transaction.conditionalyDisableAnimations(animated: animated) {
@@ -128,6 +139,7 @@ public extension RootNavigationController {
         completion: @escaping () -> Void
     ) {
         guard let presentation = controller.presentation else {
+            completion()
             return
         }
         

@@ -60,7 +60,6 @@ public extension RootNavigationController {
 
     /// Pops all screens and dismisses all presentations, returning to the root screen.
     /// - Parameters:
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func popToRoot(
         animated: Bool = true,
@@ -76,22 +75,29 @@ public extension RootNavigationController {
 
     /// Pops the topmost screen or dismisses the topmost presentation.
     /// - Parameters:
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func pop(
         completion: @escaping () -> Void = {}
     ) {
         if let presentation {
             if presentation.controller.path.isEmpty && presentation.controller.presentation == nil {
-                self.presentation = nil
+                let animated = presentation.controller.root?.wasNavigatedWithAnimation ?? true
+                
+                Transaction.conditionalyDisableAnimations(animated: animated) {
+                    self.presentation = nil
+                } completion: {
+                    completion()
+                }
             } else {
                 presentation.controller.pop(completion: completion)
             }
         } else {
-            guard let animated = path.last?.wasNavigatedWithAnimation else { return }
+            guard let animated = path.last?.wasNavigatedWithAnimation else {
+                completion()
+                return
+            }
             
             Transaction.conditionalyDisableAnimations(animated: animated) {
-                guard !path.isEmpty else { return }
                 path.removeLast()
             } completion: {
                 completion()
@@ -102,7 +108,6 @@ public extension RootNavigationController {
     /// Pops screens until the specified element is at the top, then removes it too.
     /// - Parameters:
     ///   - element: The element to pop before.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func popBefore(
         _ element: Screen,
@@ -112,7 +117,7 @@ public extension RootNavigationController {
             of: element,
             equals: { $0 == $1 }
         ) {
-        case let .index(controller, index): remove(
+        case let .index(controller, index): removeFrom(
             index: index,
             from: controller,
             completion: completion
@@ -121,14 +126,13 @@ public extension RootNavigationController {
             from: parentController,
             completion: completion
         )
-        case nil: break
+        case nil: completion()
         }
     }
 
     /// Pops screens until the specified element is at the top.
     /// - Parameters:
     ///   - element: The destination element.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func popTo(
         _ element: Screen,
@@ -147,13 +151,12 @@ public extension RootNavigationController {
             to: parentController,
             completion: completion
         )
-        case nil: break
+        case nil: completion()
         }
     }
 
     /// Pops all screens in the topmost presentation, but keeps the presentation itself.
     /// - Parameters:
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func popToPresentationRoot(
         animated: Bool = true,

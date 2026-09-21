@@ -16,7 +16,6 @@ extension RootNavigationController where Screen: CasePathable {
     /// Pops screens until a screen matching the specified case is at the top, then removes it too.
     /// - Parameters:
     ///   - element: A case key path to the destination screen case.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     public func popBefore(
         _ element: PartialCaseKeyPath<Screen>,
@@ -24,10 +23,9 @@ extension RootNavigationController where Screen: CasePathable {
     ) {
         switch location(
             of: element,
-            equals: { $0.is($1)
-            }
+            equals: { $0.is($1) }
         ) {
-        case let .index(controller, index): remove(
+        case let .index(controller, index): removeFrom(
             index: index,
             from: controller,
             completion: completion
@@ -36,14 +34,12 @@ extension RootNavigationController where Screen: CasePathable {
             from: controller,
             completion: completion
         )
-        case nil: break
+        case nil: completion()
         }
     }
 
     /// Pops screens until a screen matching the specified case is at the top.
     /// - Parameters:
-    ///   - element: A case key path to the destination screen case.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     public func popTo(
         _ element: PartialCaseKeyPath<Screen>,
@@ -62,7 +58,7 @@ extension RootNavigationController where Screen: CasePathable {
             to: controller,
             completion: completion
         )
-        case nil: break
+        case nil: completion()
         }
     }
 }
