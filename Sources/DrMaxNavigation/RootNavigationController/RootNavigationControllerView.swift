@@ -51,31 +51,7 @@ public struct RootNavigationControllerView<
                     screen($0.wrapped)
                 }
         }
-        .sheet(item: $controller.sheet) { controller in
-            PresentedNavigationControllerView(
-                controller: controller,
-                screen: screen
-            )
-            .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
-        }
-        #if !os(watchOS)
-        .popover(item: $controller.popover) { controller in
-            PresentedNavigationControllerView(
-                controller: controller,
-                screen: screen
-            )
-            .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
-        }
-        #endif
-        #if !os(macOS)
-        .fullScreenCover(item: $controller.cover) { controller in
-            PresentedNavigationControllerView(
-                controller: controller,
-                screen: screen
-            )
-            .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
-        }
-        #endif
+        .presentations(of: controller, screen: screen)
     }
 }
 
@@ -101,31 +77,44 @@ public struct PresentedNavigationControllerView<
                     screen($0.wrapped)
                 }
         }
-        .sheet(item: $controller.sheet) { controller in
-            PresentedNavigationControllerView(
-                controller: controller,
-                screen: screen
-            )
-            .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
-        }
-#if !os(watchOS)
-        .popover(item: $controller.popover) { controller in
-            PresentedNavigationControllerView(
-                controller: controller,
-                screen: screen
-            )
-            .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
-        }
-#endif
-#if !os(macOS)
-        .fullScreenCover(item: $controller.cover) { controller in
-            PresentedNavigationControllerView(
-                controller: controller,
-                screen: screen
-            )
-            .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
-        }
-#endif
+        .presentations(of: controller, screen: screen)
+    }
+}
+
+extension View {
+    /// Attaches the sheet, popover and full-screen cover presentations driven by `controller`.
+    func presentations<Screen: Hashable, ScreenView: View>(
+        of controller: RootNavigationController<Screen>,
+        screen: @escaping (Screen) -> ScreenView
+    ) -> some View {
+        @Bindable var controller = controller
+
+        return self
+            .sheet(item: $controller.sheet) { controller in
+                PresentedNavigationControllerView(
+                    controller: controller,
+                    screen: screen
+                )
+                .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
+            }
+            #if !os(watchOS)
+            .popover(item: $controller.popover) { controller in
+                PresentedNavigationControllerView(
+                    controller: controller,
+                    screen: screen
+                )
+                .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
+            }
+            #endif
+            #if !os(macOS)
+            .fullScreenCover(item: $controller.cover) { controller in
+                PresentedNavigationControllerView(
+                    controller: controller,
+                    screen: screen
+                )
+                .presentationModifiers(dismissable: controller.allowsInteractiveDismiss)
+            }
+            #endif
     }
 }
 

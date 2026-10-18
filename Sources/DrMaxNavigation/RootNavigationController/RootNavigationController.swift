@@ -45,6 +45,16 @@ public class RootNavigationController<Screen: Hashable>: Identifiable {
 
         return self
     }
+
+    /// Locates an element shown beneath this controller's path, such as a split view's selection.
+    func rootLocation<Element>(
+        of element: Element,
+        equals: (Screen, Element) -> Bool
+    ) -> ElementLocationResult? {
+        nil
+    }
+    
+    public func set(root: Screen) {}
 }
 
 // MARK: - Private Methods
@@ -192,6 +202,10 @@ public extension RootNavigationController {
         of element: Element,
         equals: (Screen, Element) -> Bool
     ) -> ElementLocationResult? {
+        if let result = rootLocation(of: element, equals: equals) {
+            return result
+        }
+
         if let index = path.firstIndex(where: { equals($0.wrapped, element) }) {
             return .index(controller: self, index: index)
         }
