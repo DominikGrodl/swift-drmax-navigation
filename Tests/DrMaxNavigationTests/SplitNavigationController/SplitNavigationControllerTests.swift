@@ -87,7 +87,10 @@ struct SplitNavigationControllerTests {
         controller.navigate(to: .two)
         controller.navigate(to: .three, style: .sheet)
 
-        #expect(controller.completePath == [.one, .two, .three].asNavigationElements())
+        #expect(
+            controller.completePath == [NavigationElement(wrapped: .one, wasNavigatedWithAnimation: false)]
+                + [.two, .three].asNavigationElements()
+        )
     }
 
     @Test

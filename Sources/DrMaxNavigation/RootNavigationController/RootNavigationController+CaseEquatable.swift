@@ -8,7 +8,7 @@ extension RootNavigationController where Screen: CaseEquatable {
     ) {
         if !allowsSameScreenNesting, let first = completePath.first(where: { $0.wrapped.equals(screen) }) {
             if let split = self as? SplitNavigationController<Screen>, first.wrapped == split.selection {
-                split.reselect(screen, animated: animated, completion: completion)
+                split.reselect(screen, completion: completion)
                 return
             }
 

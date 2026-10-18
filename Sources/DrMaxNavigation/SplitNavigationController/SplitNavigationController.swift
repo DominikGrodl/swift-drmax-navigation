@@ -80,9 +80,9 @@ public extension SplitNavigationController {
     ///
     /// Selecting a different screen clears the detail path and dismisses any presentation.
     /// Selecting the current screen leaves the detail column untouched.
+    /// Selection changes are never animated.
     /// - Parameters:
     ///   - selection: The screen to select, or `nil` to clear the selection.
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func select(
         _ selection: Screen?,
@@ -93,17 +93,18 @@ public extension SplitNavigationController {
             return
         }
 
-        replaceSelection(with: selection)
-        preferredCompactColumn = selection == nil ? .sidebar : .detail
-
+        Transaction.withoutAnimation {
+            replaceSelection(with: selection)
+            preferredCompactColumn = selection == nil ? .sidebar : .detail
+        } completion: {
+            completion()
+        }
     }
 
     /// Clears the sidebar selection, returning to the sidebar in compact width.
     /// - Parameters:
-    ///   - animated: Whether to animate the transition. Defaults to `true`.
     ///   - completion: A closure to execute after the transition finishes.
     func deselect(
-        animated: Bool = true,
         completion: @escaping () -> Void = {}
     ) {
         select(nil, completion: completion)
@@ -126,7 +127,6 @@ public extension SplitNavigationController {
     /// Reselecting the current selection clears the detail column stacked on top of it.
     func reselect(
         _ screen: Screen,
-        animated: Bool,
         completion: @escaping () -> Void
     ) {
         if screen == selection {
