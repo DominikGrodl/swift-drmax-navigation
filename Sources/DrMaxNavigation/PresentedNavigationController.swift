@@ -23,7 +23,7 @@ public final class PresentedNavigationController<Screen: Hashable>: RootNavigati
 
     /// The complete path to use when searching for children.
     override var completePath: [NavigationElement<Screen>] {
-        [root].map { $0 } + path + (presentation?.controller.completePath ?? [])
+        [root] + path + (presentation?.controller.completePath ?? [])
     }
 
     /// Creates a new presented navigation controller.
